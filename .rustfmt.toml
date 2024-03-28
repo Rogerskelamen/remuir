@@ -1,0 +1,11 @@
+max_width                = 80
+hard_tabs                = false
+edition                  = "2024"
+tab_spaces               = 2
+newline_style            = "Unix"
+use_small_heuristics     = "Max"
+reorder_modules          = true
+reorder_imports          = true
+use_try_shorthand        = true
+use_field_init_shorthand = true
+merge_derives            = true

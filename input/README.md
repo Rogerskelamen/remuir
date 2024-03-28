@@ -12,4 +12,4 @@ This generator use a customized link script `linker.ld` to help keeping environm
 
 ## Todo
 
-For now, the generator only provides single C code file for each test case project. Thus, you can't count it to generate one binary code for a bunch of code files when you want to run a relatively large graph render app. In the future, this feature will be implemented.
+For now, the generator only provides single C code file(*in `test`*) for each test case project. Thus, you can't count it to generate one binary code for a bunch of code files when you want to run a relatively large graph render app. In the future, this feature will be implemented.

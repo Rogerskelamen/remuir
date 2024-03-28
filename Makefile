@@ -1,13 +1,25 @@
 PROG    = remuir
+ROOT    = $(shell pwd)
 BUILD   = ./target/debug
 RELEASE = ./target/release
-D_BIN   = $(abspath $(BUILD)/$(PROG))
-ARGS   ?=
+BIN     = $(abspath $(BUILD)/$(PROG))
 
+# Compilation Flags
+CFLAGS   = -std=gnu11 \
+		   -O2 -MMD -Wall -Werror \
+		   -fno-asynchronous-unwind-tables -fno-builtin -fno-stack-protector \
+		   -Wno-main -U_FORTIFY_SOURCE
+CXXFLAGS = $(CFLAGS) -ffreestanding -fno-rtti -fno-exceptions
+ASFLAGS  = -MMD
+LDFLAGS  = -z noexecstack
+
+# Tags
 all: run
 
-run: build
-	 $(D_BIN) $(ARGS)
+# Default binary is dummy.elf
+# help: make run NAME=[C file in input/tests/]
+run: build image
+	@$(BIN) $(IMAGE).bin
 
 build:
 	@cargo build
@@ -22,6 +34,12 @@ format:
 	@cargo fmt
 
 clean:
+	-rm -rf $(IPT_BUILD)
 	@cargo clean
 
-.PHONY: all run build release lint format clean
+-include input/scripts/am.mk
+
+aaa:
+	@echo $(OBJS)
+
+.PHONY: all run build release lint format clean image

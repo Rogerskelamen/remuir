@@ -3,6 +3,7 @@ ROOT    = $(shell pwd)
 BUILD   = ./target/debug
 RELEASE = ./target/release
 BIN     = $(abspath $(BUILD)/$(PROG))
+ARGS   ?=
 
 # Compilation Flags
 CFLAGS   = -std=gnu11 \
@@ -20,10 +21,10 @@ all: default
 default:
 	@cargo run
 
-# Default binary is dummy.elf
+# Default binary is dummy.bin
 # help: make run NAME=[C file in input/tests/]
 run: build image
-	@$(BIN) $(IMAGE).bin
+	@$(BIN) $(IMAGE).bin $(ARGS)
 
 build:
 	@cargo build

@@ -1,3 +1,3 @@
-pub fn _easy_print() {
+pub fn sdb_init() {
   println!("hello, rust")
 }

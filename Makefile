@@ -14,7 +14,11 @@ ASFLAGS  = -MMD
 LDFLAGS  = -z noexecstack
 
 # Tags
-all: run
+all: default
+
+# Default run mode: no image loaded
+default:
+	@cargo run
 
 # Default binary is dummy.elf
 # help: make run NAME=[C file in input/tests/]

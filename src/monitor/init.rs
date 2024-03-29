@@ -15,11 +15,8 @@ fn parse_args() {
   // let args: Vec<String> = env::args().collect();
 
   // print all args
-  for (idx, item) in args.iter().enumerate() {
-    if idx == 0 {
-      continue;
-    }
-    println!("get arg[{idx}]: {item}");
+  for arg in args.iter().skip(1) {
+    println!("{arg}");
   }
 }
 

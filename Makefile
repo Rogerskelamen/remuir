@@ -24,7 +24,7 @@ default:
 # Default binary is dummy.bin
 # help: make run NAME=[C file in input/tests/]
 run: build image
-	@$(BIN) $(IMAGE).bin $(ARGS)
+	@cargo run $(IMAGE).bin $(ARGS)
 
 build:
 	@cargo build
@@ -44,7 +44,4 @@ clean:
 
 -include input/scripts/am.mk
 
-aaa:
-	@echo $(OBJS)
-
-.PHONY: all run build release lint format clean image
+.PHONY: all default run build release lint format clean image

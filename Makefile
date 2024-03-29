@@ -19,7 +19,7 @@ all: default
 
 # Default run mode: no image loaded
 default:
-	@cargo run
+	@cargo run $(ARGS)
 
 # Default binary is dummy.bin
 # help: make run NAME=[C file in input/tests/]

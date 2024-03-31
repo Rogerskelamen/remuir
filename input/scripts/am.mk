@@ -55,7 +55,9 @@ $(IMAGE).elf: $(OBJS)
 	@$(LD) $(LDFLAGS) -o $(IMAGE).elf $^
 
 # Tags
-image: $(IMAGE).elf
+$(IMAGE).bin: $(IMAGE).elf
 	@$(OBJDUMP) -d $(IMAGE).elf > $(IMAGE).txt
 	@echo + OBJCOPY "->" $(IMAGE_REL).bin
 	@$(OBJCOPY) -S --set-section-flags .bss=alloc,contents -O binary $(IMAGE).elf $(IMAGE).bin
+
+image: $(IMAGE).bin

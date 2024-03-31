@@ -4,7 +4,7 @@ use std::{fs::File, io::Read, path::PathBuf};
 
 use structopt::StructOpt;
 
-use crate::memory::pmem::load_default_img;
+use crate::{log, memory::pmem::load_default_img};
 
 use super::sdb::sdb_init;
 
@@ -26,7 +26,7 @@ fn load_img(image: Option<PathBuf>) -> Vec<u8> {
       buf
     },
     None => {
-      println!("Default image loaded");
+      log!("Default image loaded");
       load_default_img()
     }
   }

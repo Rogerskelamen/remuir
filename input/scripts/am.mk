@@ -26,16 +26,16 @@ OBJS = $(addprefix $(IPT_BUILD)/, $(addsuffix .o, $(basename $(SRCS))))
 LINKER = $(INPUT)/scripts/linker.ld
 
 # Compilation Flags
-CFLAGS += -I$(INPUT)/include
-CFLAGS += -DMAINARGS=\"$(mainargs)\"
+CFLAGS  += -I$(INPUT)/include
+CFLAGS  += -DMAINARGS=\"$(mainargs)\"
 LDFLAGS += -T $(LINKER) \
 		   --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0
 LDFLAGS += --gc-sections -e _start
 
 # Compilation Rules
 # Have to add input prefix to '.c' files
-# Cause the Makefile work env is in remuir
-# Not input
+# Cause the Makefile work env is in `/remuir`
+# Not `/input`
 # '.c' -> '.o' : SRCS(.c) -> OBJS
 $(IPT_BUILD)/%.o: input/%.c
 	@mkdir -p $(dir $@) && echo + CC $<

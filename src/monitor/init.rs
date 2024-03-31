@@ -1,6 +1,6 @@
 // use std::env;
 
-use std::{fs::File, io, path::PathBuf};
+use std::{fs::File, io::Read, path::PathBuf};
 
 use structopt::StructOpt;
 
@@ -19,11 +19,11 @@ struct Opt {
 
 fn load_img(image: Option<PathBuf>) {
   let mut flag: bool = false;
-  let file: io::Result<File>;
+  let str: String = String::from("sdf");
   match image {
     Some(path) => {
-      file = File::open(path);
-
+      let mut f = File::open(str);
+      f.read_to_end();
     },
     None => {
       println!("Default image loaded");

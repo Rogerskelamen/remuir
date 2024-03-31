@@ -1,2 +1,2 @@
 pub mod ansi;
-pub mod constant;
+pub mod config;

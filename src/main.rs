@@ -1,7 +1,8 @@
 // remuir -- a simple emulator to run riscv binary code
 
-mod memory;
 mod monitor;
+mod memory;
+mod cpu;
 mod utils;
 
 use monitor::init::init_monitor;

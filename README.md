@@ -4,6 +4,4 @@ Remuir, named from RISC-V Emulator In Rust, is a simple RISC-V emulator to run r
 
 ## development log
 
-1. 从命令行参数中读入待载入的二进制文件路径
-
-2. 为二进制文件分配内存空间，包括读取文件的字节大小
+1. 将读到的二进制文件的内容给到mem，执行cpu的exec来执行指令

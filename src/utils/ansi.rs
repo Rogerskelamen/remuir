@@ -4,7 +4,7 @@
  * println a string with blue color
  */
 #[macro_export]
-macro_rules! log {
+macro_rules! Log {
   ($s:literal) => {
     println!("\u{001b}[34m{}\u{001b}[0m", $s);
   };

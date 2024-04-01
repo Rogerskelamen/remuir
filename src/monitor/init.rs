@@ -14,7 +14,7 @@ struct Opt {
   image: Option<PathBuf>,
 
   #[structopt(short = "-b", long = "--batch", help = "run in batch mode")]
-  _batch: bool
+  _batch: bool,
 }
 
 fn load_img(image: Option<PathBuf>) -> Vec<u8> {
@@ -24,7 +24,7 @@ fn load_img(image: Option<PathBuf>) -> Vec<u8> {
       let mut buf = Vec::new();
       f.read_to_end(&mut buf).expect("Can't read the binary file");
       buf
-    },
+    }
     None => {
       log!("Default image loaded");
       load_default_img()

@@ -1,6 +1,8 @@
 // use std::mem;
 
-static IMG: [u32;5] = [
+// This variable is loaded into memory for every running
+// May not neccessary to be static
+static IMG: [u32; 5] = [
   0x00000297, // auipc t0, 0
   0x00028823, // sb zero, 16(t0)
   0x0102c503, // lbu a0, 16(t0)
@@ -14,10 +16,10 @@ pub fn _init_mem() {
 
 pub fn load_default_img() -> Vec<u8> {
   // IMG -> img : [u32;5] -> [u8;20]
-  let img: [u8;20] = IMG
+  let img: [u8; 20] = IMG
     .iter()
     .flat_map(|&x| {
-      let mut bytes = [0;4];
+      let mut bytes = [0; 4];
       bytes.copy_from_slice(&x.to_le_bytes());
       bytes.to_vec()
     })

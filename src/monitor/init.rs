@@ -4,7 +4,7 @@ use std::{fs::File, io::Read, path::PathBuf};
 
 use structopt::StructOpt;
 
-use crate::{Log, memory::pmem::load_default_img};
+use crate::{memory::pmem::{init_mem, load_default_img}, log};
 
 use super::sdb::sdb_init;
 
@@ -22,13 +22,10 @@ pub fn init_monitor() {
   let args = Opt::from_args();
   println!("{:#?}", args);
 
-  // let pmem = init_mem();
-  // println!("{:?}", pmem);
+  let imgsize = load_img(args.image);
+  log!("Image loaded {} bytes", imgsize);
 
-  let buf = load_img(args.image);
-  println!("{:?}", buf);
-
-  cpu_exec()
+  // cpu_exec()
 
   sdb_init();
   welcome();
@@ -38,17 +35,18 @@ fn welcome() {
   println!("Welcome to remuir!");
 }
 
-fn load_img(image: Option<PathBuf>) -> Vec<u8> {
+fn load_img(image: Option<PathBuf>) -> usize {
+  let mut buf = Vec::new();
+
   match image {
     Some(path) => {
       let mut f = File::open(path).expect("Please give a valid binary file");
-      let mut buf = Vec::new();
       f.read_to_end(&mut buf).expect("Can't read the binary file");
-      buf
     }
     None => {
-      Log!("Default image loaded");
-      load_default_img()
+      log!("Loading default image...");
+      buf = load_default_img();
     }
   }
+  init_mem(&buf)
 }

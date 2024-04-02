@@ -2,11 +2,14 @@
 
 /*
  * println a string with blue color
+ * $s: log message
+ * $e: optional expression to print
  */
 #[macro_export]
-macro_rules! Log {
-  ($s:literal) => {
-    println!("\u{001b}[34m{}\u{001b}[0m", $s);
+macro_rules! log {
+  ($s:literal $(, $e:expr)*) => {
+    let s = format!($s, $($e)*);
+    println!("\u{001b}[34m{}\u{001b}[0m", s);
   };
 }
 
@@ -16,7 +19,7 @@ macro_rules! Log {
  * $s: error message
  */
 #[macro_export]
-macro_rules! Assert {
+macro_rules! alert {
   ($e:expr, $s:literal) => {
     if !$e {
       println!("\u{001b}[31m{}\u{001b}[0m", $s);

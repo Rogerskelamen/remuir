@@ -14,7 +14,7 @@ struct Opt {
   image: Option<PathBuf>,
 
   #[structopt(short = "-b", long = "--batch", help = "run in batch mode")]
-  _batch: bool,
+  batch: bool,
 }
 
 pub fn init_monitor() {
@@ -25,9 +25,8 @@ pub fn init_monitor() {
   let imgsize = load_img(args.image);
   log!("Image loaded {} bytes", imgsize);
 
-  // cpu_exec()
+  sdb_init(args.batch);
 
-  sdb_init();
   welcome();
 }
 

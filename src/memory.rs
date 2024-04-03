@@ -1,2 +1,2 @@
-pub mod pmem;
 pub mod access;
+pub mod pmem;

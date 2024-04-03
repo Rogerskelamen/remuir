@@ -5,10 +5,12 @@ mod memory;
 mod cpu;
 mod utils;
 
-use monitor::init::init_monitor;
+use monitor::{init::init_monitor, sdb::sdb_start};
 
 fn main() {
+  /* Initialize the monitor */
   init_monitor();
 
-  // sdb_start();
+  /* Start SDB */
+  sdb_start();
 }

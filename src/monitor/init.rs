@@ -27,11 +27,7 @@ pub fn init_monitor() {
 
   sdb_init(args.batch);
 
-  welcome();
-}
-
-fn welcome() {
-  println!("Welcome to remuir!");
+  welcome(args.batch);
 }
 
 fn load_img(image: Option<PathBuf>) -> usize {
@@ -48,4 +44,10 @@ fn load_img(image: Option<PathBuf>) -> usize {
     }
   }
   init_mem(&buf)
+}
+
+fn welcome(isbatch:bool) {
+  let name = "remuir";
+  println!("Welcome to \u{001b}[44;30;1m{}\u{001b}[0m!", name);
+  if isbatch { println!("For help, type \"help\""); }
 }

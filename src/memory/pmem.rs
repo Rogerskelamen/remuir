@@ -1,6 +1,6 @@
 // use std::mem;
 
-use crate::utils::config::*;
+use crate::utils::config::Byte;
 
 static mut PMEM: Vec<Byte> = Vec::new();
 

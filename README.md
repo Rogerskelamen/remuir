@@ -15,3 +15,5 @@ Remuir, named from RISC-V Emulator In Rust, is a simple RISC-V emulator to run r
 5. `cpu_exec()`从`0x80000000`执行完整个程序
 
 6. 对于每一个指令来说，从`PMEM`中读取到对应的指令数据返回给`s.inst`
+
+7. 从`s.inst`这个32bit数据中解析出对应的指令，然后执行相应操作模拟处理器行为

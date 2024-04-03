@@ -1,18 +1,16 @@
-use core::panic;
-
 use crate::{alert, utils::config::*};
 
 use super::pmem::PMEM;
 
 fn check_bound(addr: Addr, len: usize) -> bool {
-  addr as usize > MBASE && addr as usize + len < MBASE + MSIZE
+  addr as usize >= MBASE && addr as usize + len <= MBASE + MSIZE
 }
 
 pub fn mem_read(addr: Addr, len: usize) -> Word {
-  if check_bound(addr, len) {
+  if !check_bound(addr, len) {
     alert!(
       false,
-      "Address [{:#x} - {:#x}] out of Range",
+      "Address [{:#x} - {:#x}] out of Memory",
       addr,
       addr as usize + len
     );
@@ -45,7 +43,13 @@ fn pmem_read(addr: Addr, len: usize) -> Word {
       data
     }
     _ => {
-      panic!("Align length [{}] is invalid", len)
+      // TODO: add a customized panic to macro_rules
+      alert!(
+        false,
+        "Address align length [{}] is invalid, expect [1/2/4]",
+        len
+      );
+      return 0; // placehold: never reach here
     }
   }
 }

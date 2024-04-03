@@ -13,12 +13,23 @@ pub fn mem_read(addr: Addr, len: usize) {
   pmem_read(addr, len);
 }
 
-fn pmem_read(addr: Addr, len: usize) {
+fn pmem_read(addr: Addr, len: usize) -> Word{
+  let addr = addr as usize - MBASE;
+  let data: Word;
   match len {
     1 => {
       unsafe {
-        // PMEM.get(addr as usize)?
+        data = *PMEM.get(addr).unwrap() as Word
       }
+      data
+    }
+    2 => {
+      unsafe {
+        let tmp = &PMEM[addr..addr+2];
+        data = u16::from_le_bytes([tmp[0], tmp[1]]) as Word
+        // PMEM.get(addr) + PMEM.get(addr + 1)
+      }
+      data
     }
   }
 }

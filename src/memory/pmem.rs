@@ -2,9 +2,9 @@
 
 use crate::utils::config::Byte;
 
-static mut PMEM: Vec<Byte> = Vec::new();
+pub static mut PMEM: Vec<Byte> = Vec::new();
 
-pub fn init_mem(buf:&Vec<Byte>) -> usize {
+pub fn init_mem(buf: &Vec<Byte>) -> usize {
   unsafe {
     PMEM.extend_from_slice(buf);
     println!("{:?}", PMEM);

@@ -4,7 +4,10 @@ use std::{fs::File, io::Read, path::PathBuf};
 
 use structopt::StructOpt;
 
-use crate::{memory::pmem::{init_mem, load_default_img}, log};
+use crate::{
+  log,
+  memory::pmem::{init_mem, load_default_img},
+};
 
 use super::sdb::sdb_init;
 
@@ -46,8 +49,10 @@ fn load_img(image: Option<PathBuf>) -> usize {
   init_mem(&buf)
 }
 
-fn welcome(isbatch:bool) {
+fn welcome(isbatch: bool) {
   let name = "remuir";
   println!("Welcome to \u{001b}[44;30;1m{}\u{001b}[0m!", name);
-  if isbatch { println!("For help, type \"help\""); }
+  if isbatch {
+    println!("For help, type \"help\"");
+  }
 }

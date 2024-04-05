@@ -14,6 +14,19 @@ macro_rules! log {
 }
 
 /*
+ * panic with a red message
+ * $s: panic message
+ * $e: optional expression to print
+ */
+#[macro_export]
+macro_rules! crumble {
+  ($s:literal $(, $e:expr)*) => {
+    let s = format!($s $(, $e)*);
+    panic!("\u{001b}[31m{}\u{001b}[0m", s);
+  };
+}
+
+/*
  * println a error message with red color if expr failed
  * $e: expression
  * $s: error message

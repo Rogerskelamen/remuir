@@ -25,6 +25,7 @@ pub fn init_monitor() {
   let args = Opt::from_args();
   println!("{:#?}", args);
 
+  /* Load image */
   let imgsize = load_img(args.image);
   log!("Image loaded {} bytes", imgsize);
 

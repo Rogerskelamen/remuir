@@ -1,4 +1,4 @@
-use crate::{alert, utils::config::*};
+use crate::{alert, crumble, utils::config::*};
 
 use super::pmem::PMEM;
 
@@ -43,13 +43,7 @@ fn pmem_read(addr: Addr, len: usize) -> Word {
       data
     }
     _ => {
-      // TODO: add a customized panic to macro_rules
-      alert!(
-        false,
-        "Address align length [{}] is invalid, expect [1/2/4]",
-        len
-      );
-      return 0; // placehold: never reach here
+      crumble!("Address align length [{}] is invalid, expect [1/2/4]", len);
     }
   }
 }

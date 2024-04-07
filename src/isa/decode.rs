@@ -20,7 +20,6 @@ pub fn find_inst(inst: Word) -> &'static str {
   return "inv";
 }
 
-
 #[rustfmt::skip]
 fn inst_pat(inst: Word, pattern: &str) -> bool {
   let p: String = pattern.split_whitespace().collect();

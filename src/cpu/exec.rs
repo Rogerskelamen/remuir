@@ -1,10 +1,6 @@
 use crate::{isa::inst::isa_exec, utils::config::*};
 
-#[derive(Debug)]
-struct Cpu {
-  pc: Addr,
-  _gpr: [Word; GPR_NR],
-}
+use super::core::{pc_get, pc_set};
 
 #[derive(Default, Debug)]
 pub struct Decode {
@@ -12,8 +8,6 @@ pub struct Decode {
   pub npc: Addr,
   pub inst: Word,
 }
-
-static mut CORE: Cpu = Cpu { pc: MBASE as u32, _gpr: [0; GPR_NR] };
 
 /*
  * Execute for n times
@@ -41,9 +35,7 @@ fn execute(mut n: u32) {
 }
 
 fn exec_once(s: &mut Decode) {
-  s.pc = unsafe { CORE.pc };
+  s.pc = pc_get();
   isa_exec(s);
-  unsafe {
-    CORE.pc = s.npc;
-  }
+  pc_set(s.npc); // update pc
 }

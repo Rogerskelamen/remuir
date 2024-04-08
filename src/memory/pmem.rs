@@ -1,15 +1,21 @@
-// use std::mem;
+use std::{collections::HashMap, sync::Mutex};
 
-use crate::utils::config::Byte;
+use lazy_static::lazy_static;
 
-pub static mut PMEM: Vec<Byte> = Vec::new();
+use crate::utils::config::{Byte, Addr, MBASE};
+
+// pub static mut PMEM: Vec<Byte> = Vec::new();
+lazy_static! {
+  pub static ref PMEM: Mutex<HashMap<Addr, Byte>> = Mutex::new(HashMap::new());
+}
 
 pub fn init_mem(buf: &Vec<Byte>) -> usize {
-  unsafe {
-    PMEM.extend_from_slice(buf);
-    println!("{:?}", PMEM);
-    PMEM.len()
+  let mut pmem = PMEM.lock().unwrap();
+  for (idx, &byte) in buf.iter().enumerate() {
+    pmem.insert((MBASE + idx) as Addr, byte);
   }
+  println!("{:?}", pmem);
+  pmem.len()
 }
 
 pub fn load_default_img() -> Vec<u8> {

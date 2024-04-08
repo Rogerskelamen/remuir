@@ -16,6 +16,7 @@ enum ImmType {
   B,
   U,
   J,
+  N
 }
 
 pub fn isa_exec(s: &mut Decode) {
@@ -59,6 +60,7 @@ fn isa_decode(s: &mut Decode) {
         ImmType::J => {
           imm = imm_j(s.inst);
         }
+        ImmType::N => {}
       }
       $(
         $stat
@@ -69,10 +71,11 @@ fn isa_decode(s: &mut Decode) {
   println!("{:#x}", s.inst);
   match find_inst(s.inst) {
     "auipc" => {
-      // 1. rd = s.pc + imm
+      // rd = s.pc + imm
       instexec!(ImmType::U, gpr_set(rd, s.pc + imm));
     }
     "lbu" => {
+      // rd = mem(rs1 + imm, 1)
       instexec!(ImmType::I, gpr_set(rd, mem_read(src1 + imm, 1)));
     }
     "sb" => {
@@ -90,7 +93,7 @@ fn isa_decode(s: &mut Decode) {
 }
 
 fn split_bits(data: Word, hi: usize, lo: usize) -> Word {
-  (data >> lo) & (1usize << (hi - lo + 1) - 1) as Word
+  (data >> lo) & ((1usize << (hi - lo + 1)) - 1) as Word
 }
 
 fn expand_signed(data: Word, width: usize) -> Word {

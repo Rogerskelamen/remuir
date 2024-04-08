@@ -18,29 +18,36 @@ pub fn mem_read(addr: Addr, len: usize) -> Word {
   pmem_read(addr, len)
 }
 
+fn pmem_set(addr: Addr, byte: u8) {
+  let mut pmem = PMEM.lock().unwrap();
+  if let Some(value) = pmem.get_mut(&addr) {
+    *value = byte;
+  }else {
+    pmem.insert(addr, byte);
+  }
+}
+
+fn pmem_get(addr: Addr) -> Byte {
+  let pmem = PMEM.lock().unwrap();
+  match pmem.get(&addr) {
+    Some(byte) => {
+      *byte
+    }
+    None => { 0 }
+  }
+}
+
 fn pmem_read(addr: Addr, len: usize) -> Word {
-  let addr = addr as usize - MBASE;
-  let data: Word;
+  // let addr = addr as usize - MBASE;
   match len {
     1 => {
-      unsafe {
-        data = *PMEM.get(addr).unwrap() as Word;
-      }
-      data
+      pmem_get(addr) as Word
     }
     2 => {
-      unsafe {
-        let tmp = &PMEM[addr..addr + 2];
-        data = u16::from_le_bytes([tmp[0], tmp[1]]) as Word
-      }
-      data
+      u16::from_le_bytes([pmem_get(addr), pmem_get(addr + 1)]) as Word
     }
     4 => {
-      unsafe {
-        let tmp = &PMEM[addr..addr + 4];
-        data = Word::from_le_bytes([tmp[0], tmp[1], tmp[2], tmp[3]])
-      }
-      data
+      u32::from_le_bytes([pmem_get(addr), pmem_get(addr + 1), pmem_get(addr + 2), pmem_get(addr + 3)])
     }
     _ => {
       crumble!("Address align length [{}] is invalid, expect [1/2/4]", len);

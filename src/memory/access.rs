@@ -18,6 +18,22 @@ pub fn mem_read(addr: Addr, len: usize) -> Word {
   pmem_read(addr, len)
 }
 
+pub fn mem_write(addr: Addr, data: Word, len: usize) {
+  if !check_bound(addr, len) {
+    alert!(
+      false,
+      "Address [{:#x} - {:#x}] out of Memory",
+      addr,
+      addr as usize + len
+    );
+  }
+  pmem_write(addr, data, len);
+}
+
+fn pmem_write(addr: Addr, data: Word, len: usize) {
+  
+}
+
 fn pmem_set(addr: Addr, byte: u8) {
   let mut pmem = PMEM.lock().unwrap();
   if let Some(value) = pmem.get_mut(&addr) {
@@ -38,7 +54,6 @@ fn pmem_get(addr: Addr) -> Byte {
 }
 
 fn pmem_read(addr: Addr, len: usize) -> Word {
-  // let addr = addr as usize - MBASE;
   match len {
     1 => {
       pmem_get(addr) as Word

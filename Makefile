@@ -42,6 +42,13 @@ clean:
 	-rm -rf $(IPT_BUILD)
 	@cargo clean
 
+count:
+	@echo [input]
+	@find ./input -name "*.[!md]" -type f | xargs wc -l
+	@echo
+	@echo [rust]
+	@find ./src -name "*.rs" -type f | xargs wc -l
+
 -include input/scripts/am.mk
 
 .PHONY: all default run build release lint format clean image

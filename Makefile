@@ -44,7 +44,7 @@ clean:
 
 count:
 	@echo [input]
-	@find ./input -name "*.[!md]" -type f | xargs wc -l
+	@find ./input -name "*.[chS]" -or -name "*.ld" -type f | xargs wc -l
 	@echo
 	@echo [rust]
 	@find ./src -name "*.rs" -type f | xargs wc -l

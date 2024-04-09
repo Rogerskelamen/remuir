@@ -5,6 +5,6 @@ pub const GPR_NR: usize = 32;
 
 // type alias
 pub type Word = u32;
-pub type SWord = i32;
+pub type _SWord = i32;
 pub type Addr = u32;
 pub type Byte = u8;

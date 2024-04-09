@@ -25,6 +25,7 @@ pub fn isa_exec(s: &mut Decode) {
 }
 
 #[rustfmt::skip]
+#[allow(unused_assignments)]
 fn isa_decode(s: &mut Decode) {
   let mut imm: Word = 0;
   let mut src1: Word = 0; let mut src2: Word = 0;

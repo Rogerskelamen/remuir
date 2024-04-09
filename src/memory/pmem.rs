@@ -1,12 +1,12 @@
-use std::{collections::HashMap, sync::Mutex};
+use std::{collections::BTreeMap, sync::Mutex};
 
 use lazy_static::lazy_static;
 
-use crate::utils::config::{Byte, Addr, MBASE};
+use crate::utils::config::{Addr, Byte, MBASE};
 
-// pub static mut PMEM: Vec<Byte> = Vec::new();
 lazy_static! {
-  pub static ref PMEM: Mutex<HashMap<Addr, Byte>> = Mutex::new(HashMap::new());
+  pub static ref PMEM: Mutex<BTreeMap<Addr, Byte>> =
+    Mutex::new(BTreeMap::new());
 }
 
 pub fn init_mem(buf: &Vec<Byte>) -> usize {
@@ -14,7 +14,11 @@ pub fn init_mem(buf: &Vec<Byte>) -> usize {
   for (idx, &byte) in buf.iter().enumerate() {
     pmem.insert((MBASE + idx) as Addr, byte);
   }
-  println!("{:?}", pmem);
+  println!("{{");
+  for (key, value) in &mut *pmem {
+    println!("  {:#x}: {}", key, value);
+  }
+  println!("}}");
   pmem.len()
 }
 
@@ -32,7 +36,7 @@ pub fn load_default_img() -> Vec<u8> {
     .iter()
     .flat_map(|&x| {
       let mut bytes = [0; 4];
-      bytes.copy_from_slice(&x.to_le_bytes());
+      bytes.copy_from_slice(&x.to_ne_bytes());
       bytes.to_vec()
     })
     .collect::<Vec<u8>>()

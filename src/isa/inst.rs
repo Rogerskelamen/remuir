@@ -5,7 +5,7 @@ use crate::{
   },
   crumble,
   isa::decode::find_inst,
-  memory::access::mem_read,
+  memory::access::{mem_read, mem_write, show_pmem},
   utils::config::Word,
 };
 
@@ -16,7 +16,7 @@ enum ImmType {
   B,
   U,
   J,
-  N
+  N,
 }
 
 pub fn isa_exec(s: &mut Decode) {
@@ -74,14 +74,16 @@ fn isa_decode(s: &mut Decode) {
       // rd = s.pc + imm
       instexec!(ImmType::U, gpr_set(rd, s.pc + imm));
     }
+    "sb" => {
+      // mem(rs1 + imm, rs2, 1)
+      instexec!(ImmType::S, mem_write(src1 + imm, src2, 1));
+    }
     "lbu" => {
       // rd = mem(rs1 + imm, 1)
       instexec!(ImmType::I, gpr_set(rd, mem_read(src1 + imm, 1)));
     }
-    "sb" => {
-      instexec!(ImmType::S, gpr_set(rd, mem_read(src1 + imm, 1)));
-    }
     "ebreak" => {
+      show_pmem();
       crumble!("encounter ebreak");
     }
     _ => { crumble!("never reach here!"); }

@@ -1,6 +1,7 @@
 use std::time::{Duration, Instant};
 
 use crate::{
+  crumble,
   engine::control::{ExecState, EMUSTATE},
   isa::inst::isa_exec,
   log,
@@ -77,7 +78,9 @@ pub fn cpu_exec(n: u32) {
         log!("remuir: \u{001b}[31mABORT\u{001b}[0m at pc = {:#x}", EMUSTATE.halt_pc);
         statistic();
       }
-      _ => {}
+      _ => {
+        crumble!("never reach here!");
+      }
     }
   }
 }

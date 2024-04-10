@@ -8,24 +8,14 @@ fn check_bound(addr: Addr, len: usize) -> bool {
 
 pub fn mem_read(addr: Addr, len: usize) -> Word {
   if !check_bound(addr, len) {
-    alert!(
-      false,
-      "Address [{:#x} - {:#x}] out of Memory",
-      addr,
-      addr as usize + len
-    );
+    alert!(false, "Address [{:#x} - {:#x}] out of Memory", addr, addr as usize + len);
   }
   pmem_read(addr, len)
 }
 
 pub fn mem_write(addr: Addr, data: Word, len: usize) {
   if !check_bound(addr, len) {
-    alert!(
-      false,
-      "Address [{:#x} - {:#x}] out of Memory",
-      addr,
-      addr as usize + len
-    );
+    alert!(false, "Address [{:#x} - {:#x}] out of Memory", addr, addr as usize + len);
   }
   pmem_write(addr, data, len);
 }
@@ -85,7 +75,7 @@ fn pmem_write(addr: Addr, data: Word, len: usize) {
   }
 }
 
-pub fn show_pmem() {
+pub fn _show_pmem() {
   let mut pmem = PMEM.lock().unwrap();
   println!("{{");
   for (key, value) in &mut *pmem {

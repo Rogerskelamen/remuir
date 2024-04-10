@@ -4,7 +4,7 @@ use crate::{
     exec::Decode,
   },
   crumble,
-  engine::control::invalid_inst,
+  engine::control::{invalid_inst, set_emu_state, ExecState},
   isa::decode::find_inst,
   memory::access::{mem_read, mem_write},
   utils::config::Word,
@@ -86,10 +86,10 @@ fn isa_decode(s: &mut Decode) {
       instexec!(ImmType::I, gpr_set(rd, mem_read(src1 + imm, 1)));
     }
     "ebreak" => {
-      crumble!("encounter ebreak");
+      instexec!(ImmType::N, set_emu_state(ExecState::End, s.pc, gpr_get(10) as usize));
     }
     "inv" => {
-      invalid_inst(s.pc);
+      invalid_inst(s.pc); // state = abort
     }
     _ => { crumble!("never reach here!"); }
   }
@@ -102,11 +102,8 @@ fn split_bits(data: Word, hi: usize, lo: usize) -> Word {
 }
 
 fn expand_signed(data: Word, width: usize) -> Word {
-  let expand_bits: Word = if data >> (width - 1) == 1 {
-    !((1usize << width) - 1) as Word
-  } else {
-    0 as Word
-  };
+  let expand_bits: Word =
+    if data >> (width - 1) == 1 { !((1usize << width) - 1) as Word } else { 0 as Word };
   data | expand_bits
 }
 

@@ -1,6 +1,11 @@
-use std::time::Instant;
+use std::time::{Duration, Instant};
 
-use crate::{isa::inst::isa_exec, utils::config::*, engine::control::{EMUSTATE, ExecState}};
+use crate::{
+  engine::control::{ExecState, EMUSTATE},
+  isa::inst::isa_exec,
+  log,
+  utils::config::*,
+};
 
 use super::core::{pc_get, pc_set};
 
@@ -11,12 +16,25 @@ pub struct Decode {
   pub inst: Word,
 }
 
-static mut TIMER: usize = 0;
+static mut TIMER: Duration = Duration::new(0, 0);
+static mut INST_CNT: u128 = 0;
+
+fn statistic() {
+  unsafe {
+    log!("host time spent = {} us", TIMER.as_micros());
+    log!("total guest instructions = {}", INST_CNT);
+    if TIMER.as_micros() > 0 {
+      log!("simulation frequency = {} inst/s", INST_CNT * 1_000_000 / TIMER.as_micros());
+    } else {
+      log!("Finish running in less than 1 us and can not calculate the simulation frequency");
+    }
+  }
+}
 
 /*
  * Execute for n times
  * Statistic the process,
- * Control Cpu status
+ * Control Engine status
  */
 pub fn cpu_exec(n: u32) {
   unsafe {
@@ -32,12 +50,36 @@ pub fn cpu_exec(n: u32) {
   }
 
   let timer_start = Instant::now();
+
   // execute instructions
   execute(n);
+
   let timer_end = Instant::now();
-  unsafe {TIMER += timer_end - timer_start;}
+  unsafe {
+    TIMER += timer_end - timer_start;
+  }
 
   /* Some control task */
+  unsafe {
+    match EMUSTATE.state {
+      ExecState::Running => {
+        EMUSTATE.state = ExecState::Stop;
+      }
+      ExecState::End => {
+        if EMUSTATE.halt_ret == 0 {
+          log!("remuir: \u{001b}[32mHIT GOOD TRAP\u{001b}[0m at pc = {:#x}", EMUSTATE.halt_pc);
+        } else {
+          log!("remuir: \u{001b}[31mHIT BAD TRAP\u{001b}[0m at pc = {:#x}", EMUSTATE.halt_pc);
+        }
+        statistic();
+      }
+      ExecState::Abort => {
+        log!("remuir: \u{001b}[31mABORT\u{001b}[0m at pc = {:#x}", EMUSTATE.halt_pc);
+        statistic();
+      }
+      _ => {}
+    }
+  }
 }
 
 /*
@@ -50,6 +92,12 @@ fn execute(mut n: u32) {
     /* some work before exec */
     exec_once(&mut s);
     /* some work after exec */
+    unsafe {
+      INST_CNT += 1;
+      if !matches!(EMUSTATE.state, ExecState::Running) {
+        break;
+      }
+    }
     n -= 1;
   }
 }

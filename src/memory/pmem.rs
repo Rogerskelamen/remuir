@@ -5,8 +5,7 @@ use lazy_static::lazy_static;
 use crate::utils::config::{Addr, Byte, MBASE};
 
 lazy_static! {
-  pub static ref PMEM: Mutex<BTreeMap<Addr, Byte>> =
-    Mutex::new(BTreeMap::new());
+  pub static ref PMEM: Mutex<BTreeMap<Addr, Byte>> = Mutex::new(BTreeMap::new());
 }
 
 pub fn init_mem(buf: &Vec<Byte>) -> usize {

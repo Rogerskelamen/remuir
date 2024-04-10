@@ -4,8 +4,9 @@ use crate::{
     exec::Decode,
   },
   crumble,
+  engine::control::invalid_inst,
   isa::decode::find_inst,
-  memory::access::{mem_read, mem_write, show_pmem},
+  memory::access::{mem_read, mem_write},
   utils::config::Word,
 };
 
@@ -69,7 +70,8 @@ fn isa_decode(s: &mut Decode) {
     };
   }
 
-  println!("{:#x}", s.inst);
+  println!("{:#x}: {:#x}", s.pc, s.inst);
+  s.npc = s.pc + 4;
   match find_inst(s.inst) {
     "auipc" => {
       // rd = s.pc + imm
@@ -84,15 +86,15 @@ fn isa_decode(s: &mut Decode) {
       instexec!(ImmType::I, gpr_set(rd, mem_read(src1 + imm, 1)));
     }
     "ebreak" => {
-      show_pmem();
       crumble!("encounter ebreak");
+    }
+    "inv" => {
+      invalid_inst(s.pc);
     }
     _ => { crumble!("never reach here!"); }
   }
 
   gpr_set(0, 0); // x0 is always zero
-
-  s.npc = s.pc + 4;
 }
 
 fn split_bits(data: Word, hi: usize, lo: usize) -> Word {

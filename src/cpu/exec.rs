@@ -1,4 +1,6 @@
-use crate::{isa::inst::isa_exec, utils::config::*};
+use std::time::Instant;
+
+use crate::{isa::inst::isa_exec, utils::config::*, engine::control::{EMUSTATE, ExecState}};
 
 use super::core::{pc_get, pc_set};
 
@@ -9,14 +11,32 @@ pub struct Decode {
   pub inst: Word,
 }
 
+static mut TIMER: usize = 0;
+
 /*
  * Execute for n times
  * Statistic the process,
  * Control Cpu status
  */
 pub fn cpu_exec(n: u32) {
+  unsafe {
+    match EMUSTATE.state {
+      ExecState::End | ExecState::Abort => {
+        println!("Program execution has ended. To restart the program, exit remuir and run again.");
+        return;
+      }
+      _ => {
+        EMUSTATE.state = ExecState::Running;
+      }
+    }
+  }
+
+  let timer_start = Instant::now();
   // execute instructions
   execute(n);
+  let timer_end = Instant::now();
+  unsafe {TIMER += timer_end - timer_start;}
+
   /* Some control task */
 }
 

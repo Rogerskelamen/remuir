@@ -18,4 +18,6 @@ Remuir, named from RISC-V Emulator In Rust, is a simple RISC-V emulator to run r
 
 7. 从`s.inst`这个32bit数据中解析出对应的指令，然后执行相应操作模拟处理器行为
 
-8. 将PMEM的数据结构从`Vec<Byte>`转化为Hash，这样每次读写的时候就可以按需来创建新的内存数据，具体逻辑就是在写入时创建，读取未创建内存时读出的数据为0
+8. 将PMEM的数据结构从`Vec<Byte>`转化为简单的静态数组中的数据
+
+9. 设置sdb的命令行工具

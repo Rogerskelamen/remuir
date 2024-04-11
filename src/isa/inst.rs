@@ -7,7 +7,7 @@ use crate::{
   engine::control::{invalid_inst, set_emu_state, ExecState},
   isa::decode::find_inst,
   memory::access::{mem_read, mem_write},
-  utils::config::Word,
+  utils::config::{Word, SWord},
 };
 
 enum ImmType {
@@ -24,6 +24,9 @@ pub fn isa_exec(s: &mut Decode) {
   isa_decode(s);
 }
 
+// This decode function produces two matches
+// Maybe decline the performance
+// Consider take only one match(a more complex macro)
 #[rustfmt::skip]
 #[allow(unused_assignments)]
 fn isa_decode(s: &mut Decode) {
@@ -71,16 +74,44 @@ fn isa_decode(s: &mut Decode) {
   println!("{:#x}: {:08x}", s.pc, s.inst);
   s.npc = s.pc + 4;
   match find_inst(s.inst) {
+    "add" => {
+      instexec!(ImmType::R, gpr_set(rd, src1 + src2));
+    }
+    "sub" => {
+      instexec!(ImmType::R, gpr_set(rd, src1 - src2));
+    }
+    "sll" => {
+      instexec!(ImmType::R, gpr_set(rd, src1 << src2));
+    }
+    "slt" => {
+      instexec!(ImmType::R, gpr_set(rd, if (src1 as SWord) < (src2 as SWord) {1} else {0}));
+    }
+    "sltu" => {
+      instexec!(ImmType::R, gpr_set(rd, if src1 < src2 {1} else {0}));
+    }
+    "xor" => {
+      instexec!(ImmType::R, gpr_set(rd, src1 ^ src2));
+    }
+    "srl" => {
+      instexec!(ImmType::R, gpr_set(rd, src1 >> src2));
+    }
+    "sra" => {
+      instexec!(ImmType::R, gpr_set(rd, (src1 as SWord >> src2) as Word));
+    }
+    "or" => {
+      instexec!(ImmType::R, gpr_set(rd, src1 | src2));
+    }
+    "and" => {
+      instexec!(ImmType::R, gpr_set(rd, src1 & src2));
+    }
+
     "auipc" => {
-      // rd = s.pc + imm
       instexec!(ImmType::U, gpr_set(rd, s.pc + imm));
     }
     "sb" => {
-      // mem(rs1 + imm, rs2, 1)
       instexec!(ImmType::S, mem_write(src1 + imm, src2, 1));
     }
     "lbu" => {
-      // rd = mem(rs1 + imm, 1)
       instexec!(ImmType::I, gpr_set(rd, mem_read(src1 + imm, 1)));
     }
     "ebreak" => {

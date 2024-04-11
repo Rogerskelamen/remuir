@@ -2,6 +2,16 @@ use crate::{alert, crumble, utils::config::*};
 
 use super::pmem::PMEM;
 
+fn pmem_get(addr: Addr) -> Byte {
+  unsafe { PMEM[addr as usize - MBASE] }
+}
+
+fn pmem_set(addr: Addr, byte: u8) {
+  unsafe {
+    PMEM[addr as usize - MBASE] = byte;
+  }
+}
+
 fn check_bound(addr: Addr, len: usize) -> bool {
   addr as usize >= MBASE && addr as usize + len <= MBASE + MSIZE
 }
@@ -18,23 +28,6 @@ pub fn mem_write(addr: Addr, data: Word, len: usize) {
     alert!(false, "Address [{:#x} - {:#x}] out of Memory", addr, addr as usize + len);
   }
   pmem_write(addr, data, len);
-}
-
-fn pmem_get(addr: Addr) -> Byte {
-  let pmem = PMEM.lock().unwrap();
-  match pmem.get(&addr) {
-    Some(byte) => *byte,
-    None => 0,
-  }
-}
-
-fn pmem_set(addr: Addr, byte: u8) {
-  let mut pmem = PMEM.lock().unwrap();
-  if let Some(value) = pmem.get_mut(&addr) {
-    *value = byte;
-  } else {
-    pmem.insert(addr, byte);
-  }
 }
 
 fn pmem_read(addr: Addr, len: usize) -> Word {
@@ -73,13 +66,4 @@ fn pmem_write(addr: Addr, data: Word, len: usize) {
       crumble!("Address align length [{}] is invalid, expect [1/2/4]", len);
     }
   }
-}
-
-pub fn _show_pmem() {
-  let mut pmem = PMEM.lock().unwrap();
-  println!("{{");
-  for (key, value) in &mut *pmem {
-    println!("  {:#x}: {}", key, value);
-  }
-  println!("}}");
 }

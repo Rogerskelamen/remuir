@@ -1,24 +1,18 @@
-use std::{collections::BTreeMap, sync::Mutex};
+use crate::utils::config::{Byte, MBASE, MSIZE};
 
-use lazy_static::lazy_static;
-
-use crate::utils::config::{Addr, Byte, MBASE};
-
-lazy_static! {
-  pub static ref PMEM: Mutex<BTreeMap<Addr, Byte>> = Mutex::new(BTreeMap::new());
-}
+// 128KiB available RAM
+pub static mut PMEM: [Byte; MSIZE] = [0; MSIZE];
 
 pub fn init_mem(buf: &Vec<Byte>) -> usize {
-  let mut pmem = PMEM.lock().unwrap();
-  for (idx, &byte) in buf.iter().enumerate() {
-    pmem.insert((MBASE + idx) as Addr, byte);
-  }
   println!("{{");
-  for (key, value) in &mut *pmem {
-    println!("  {:#x}: {}", key, value);
+  for (idx, byte) in buf.iter().enumerate() {
+    unsafe {
+      PMEM[idx] = *byte;
+    }
+    println!("  {:#x}: {}", idx + MBASE, byte);
   }
   println!("}}");
-  pmem.len()
+  buf.len()
 }
 
 pub fn load_default_img() -> Vec<u8> {

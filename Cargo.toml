@@ -7,4 +7,3 @@ edition = "2021"
 
 [dependencies]
 structopt = "0.3.26"
-lazy_static = "1.4.0"

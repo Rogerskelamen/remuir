@@ -7,7 +7,7 @@ use crate::{
   engine::control::{invalid_inst, set_emu_state, ExecState},
   isa::decode::find_inst,
   memory::access::{mem_read, mem_write},
-  utils::config::{Word, SWord},
+  utils::config::{SWord, Word},
 };
 
 enum ImmType {

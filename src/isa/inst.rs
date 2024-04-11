@@ -17,7 +17,6 @@ enum ImmType {
   B,
   U,
   J,
-  N,
 }
 
 pub fn isa_exec(s: &mut Decode) {
@@ -62,7 +61,6 @@ fn isa_decode(s: &mut Decode) {
         ImmType::J => {
           imm = imm_j(s.inst);
         }
-        ImmType::N => {}
       }
       $(
         $stat
@@ -70,7 +68,7 @@ fn isa_decode(s: &mut Decode) {
     };
   }
 
-  println!("{:#x}: {:#x}", s.pc, s.inst);
+  println!("{:#x}: {:08x}", s.pc, s.inst);
   s.npc = s.pc + 4;
   match find_inst(s.inst) {
     "auipc" => {
@@ -86,7 +84,7 @@ fn isa_decode(s: &mut Decode) {
       instexec!(ImmType::I, gpr_set(rd, mem_read(src1 + imm, 1)));
     }
     "ebreak" => {
-      instexec!(ImmType::N, set_emu_state(ExecState::End, s.pc, gpr_get(10) as usize));
+      set_emu_state(ExecState::End, s.pc, gpr_get(10) as usize); // state = end
     }
     "inv" => {
       invalid_inst(s.pc); // state = abort

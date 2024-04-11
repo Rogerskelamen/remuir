@@ -23,14 +23,15 @@ default:
 
 # Default binary is dummy.bin
 # help: make run NAME=[C file in input/tests/]
-run: build image
+run: image
 	@cargo run $(IMAGE).bin $(ARGS)
 
+# build production version
 build:
-	@cargo build
-
-release:
 	@cargo build --release
+
+prod: image
+	@cargo run --release $(IMAGE).bin $(ARGS)
 
 lint:
 	@cargo check
@@ -51,4 +52,4 @@ count:
 
 -include input/scripts/am.mk
 
-.PHONY: all default run build release lint format clean image
+.PHONY: all default run build release lint format clean count image

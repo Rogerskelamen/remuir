@@ -1,7 +1,8 @@
 // If compatibility problem occurs, try to use ansi_term
 
 /*
- * println a string with blue color
+ * println a string with filename and line number
+ * under blue color
  * $s: log message
  * $e: optional expression to print
  */
@@ -9,7 +10,8 @@
 macro_rules! log {
   ($s:literal $(, $e:expr)*) => {
     let s = format!($s $(, $e)*);
-    println!("\u{001b}[34m{}\u{001b}[0m", s);
+    let l = std::panic::Location::caller();
+    println!("\u{001b}[34m[{}:{}] {}\u{001b}[0m", l.file(), l.line(), s);
   };
 }
 

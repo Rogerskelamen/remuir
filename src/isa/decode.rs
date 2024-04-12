@@ -1,17 +1,12 @@
-use std::{mem::size_of, time::Instant};
+use std::mem::size_of;
 
 use crate::{alert, utils::config::Word};
 
 #[rustfmt::skip]
 pub fn find_inst(inst: Word) -> &'static str {
-  let start = Instant::now();
   macro_rules! instpat {
     ($p:literal, $r:literal) => {
-      if inst_pat(inst, $p) {
-        let end = Instant::now();
-        println!("pattern match time spent: {} us", (end - start).as_micros());
-        return $r;
-      }
+      if inst_pat(inst, $p) { return $r; }
     };
   }
 
@@ -38,7 +33,7 @@ pub fn find_inst(inst: Word) -> &'static str {
 
 // TODO: try to improve the code to put down the time spending
 /*
- * == almost up to 90% time spend of execution ==
+ * == almost up to 70% time spend of execution ==
  *          ==  is taken place here ==
  * This is the real boss of time consuming
  * time spending will keep increasing for
@@ -47,24 +42,26 @@ pub fn find_inst(inst: Word) -> &'static str {
  */
 #[rustfmt::skip]
 fn inst_pat(inst: Word, pattern: &str) -> bool {
-  let p: String = pattern.split_whitespace().collect();
-  // 0. check args
-  alert!(
-    p.len() == (size_of::<Word>() * 8),
-    "Pattern string length [{}] is not paired with instruction [{}]\nAfter whitespace was removed",
-    p.len(),
-    size_of::<Word>() * 8
-  );
   // 1. generate key and mask to pair with inst later
   let mut key: Word = 0;
   let mut mask: Word = 0;
-  for c in p.chars() {
-    alert!(
-      c != '0' || c != '1' || c != '?',
-      "Invalid character '{}' in pattern string", c
-    );
-    key  = (key  << 1) | (if c == '1' {1} else {0});
-    mask = (mask << 1) | (if c == '?' {0} else {1});
+  let mut len = 0;
+  for c in pattern.chars() {
+    // 1.1. check args
+    if c != ' ' {
+      len += 1;
+      alert!(
+        len <= (size_of::<Word>() * 8),
+        "Pattern string length is not paired with instruction [{}]\nAfter whitespace was removed",
+        size_of::<Word>() * 8
+      );
+      alert!(
+        c != '0' || c != '1' || c != '?',
+        "Invalid character '{}' in pattern string", c
+      );
+      key  = (key <<1) | (if c == '1' {1} else {0});
+      mask = (mask<<1) | (if c == '?' {0} else {1});
+    }
   }
   // 2. and mask and pair with key
   inst & mask == key

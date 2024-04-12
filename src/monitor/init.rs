@@ -1,5 +1,3 @@
-// use std::env;
-
 use std::{fs::File, io::Read, path::PathBuf};
 
 use structopt::StructOpt;

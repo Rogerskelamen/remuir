@@ -18,16 +18,19 @@ LDFLAGS  = -z noexecstack
 all: default
 
 # Default run mode: no image loaded
-default:
-	@cargo run $(ARGS)
+default: build
+	@$(BIN) $(ARGS)
 
 # Default binary is dummy.bin
 # help: make run NAME=[C file in input/tests/]
-run: image
-	@cargo run $(IMAGE).bin $(ARGS)
+run: build image
+	@$(BIN) $(IMAGE).bin $(ARGS)
+
+build:
+	@cargo build
 
 # build production version
-build:
+release:
 	@cargo build --release
 
 prod: image

@@ -37,7 +37,7 @@ fn statistic() {
  * Statistic the process,
  * Control Engine status
  */
-pub fn cpu_exec(n: u32) {
+pub fn cpu_exec(n: usize) {
   unsafe {
     match EMUSTATE.state {
       ExecState::End | ExecState::Abort => {
@@ -89,7 +89,7 @@ pub fn cpu_exec(n: u32) {
  * Execute for n times
  * But do some extra work during the time
  */
-fn execute(mut n: u32) {
+fn execute(mut n: usize) {
   let mut s = Decode::default();
   while n > 0 {
     /* some work before exec */

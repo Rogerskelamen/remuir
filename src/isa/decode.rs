@@ -1,12 +1,17 @@
-use std::mem::size_of;
+use std::{mem::size_of, time::Instant};
 
 use crate::{alert, utils::config::Word};
 
 #[rustfmt::skip]
 pub fn find_inst(inst: Word) -> &'static str {
+  let start = Instant::now();
   macro_rules! instpat {
     ($p:literal, $r:literal) => {
-      if inst_pat(inst, $p) { return $r; }
+      if inst_pat(inst, $p) {
+        let end = Instant::now();
+        println!("pattern match time spent: {} us", (end - start).as_micros());
+        return $r;
+      }
     };
   }
 
@@ -31,6 +36,15 @@ pub fn find_inst(inst: Word) -> &'static str {
   return "inv";
 }
 
+// TODO: try to improve the code to put down the time spending
+/*
+ * == almost up to 90% time spend of execution ==
+ *          ==  is taken place here ==
+ * This is the real boss of time consuming
+ * time spending will keep increasing for
+ * every time when adding a new instruction
+ * which produces another pattern match
+ */
 #[rustfmt::skip]
 fn inst_pat(inst: Word, pattern: &str) -> bool {
   let p: String = pattern.split_whitespace().collect();

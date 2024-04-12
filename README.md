@@ -21,3 +21,5 @@ Remuir, named from RISC-V Emulator In Rust, is a simple RISC-V emulator to run r
 8. 将PMEM的数据结构从`Vec<Byte>`转化为简单的静态数组中的数据
 
 9. 设置sdb的命令行工具
+
+10. 考虑如何将difftest引入到remuir中

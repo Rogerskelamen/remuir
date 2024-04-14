@@ -28,19 +28,19 @@ pub fn invalid_inst(pc: Addr) {
   print!(
     r#"
 There are two cases which will trigger this unexpected exception:
-1. The instruction at PC = [{}] is not implemented.
+1. The instruction at PC = [{:#x}] is not implemented.
 2. Something is implemented incorrectly.
-    "#,
+"#,
     pc
   );
-  // print!("Find this PC({}) in the disassembling result to distinguish which case it is.\n\n", pc);
-  print!(
+  // print!("Find this PC({:#x}) in the disassembling result to distinguish which case it is.\n\n", pc);
+  println!(
     r#"
-If it is the first case, see riscv-manual for more details.\n\n
+If it is the first case, see riscv-manual for more details.
 If it is the second case, remember:
 * The machine is always right!
-* Every line of untested code is always wrong!\n
-    "#
+* Every line of untested code is always wrong!
+"#
   );
   set_emu_state(ExecState::Abort, pc, usize::MAX);
 }

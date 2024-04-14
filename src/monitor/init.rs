@@ -51,7 +51,7 @@ fn load_img(image: Option<PathBuf>) -> usize {
 fn welcome(isbatch: bool) {
   let name = "remuir";
   println!("Welcome to \u{001b}[44;30;1m{}\u{001b}[0m!", name);
-  if isbatch {
+  if !isbatch {
     println!("For help, type \"help\"");
   }
 }

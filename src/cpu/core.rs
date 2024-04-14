@@ -11,7 +11,7 @@ struct Cpu {
  * It can only be access through fns here
  * In case other program change status in CORE
  */
-static mut CORE: Cpu = Cpu { pc: MBASE as u32, gpr: [0; GPR_NR] };
+static mut CORE: Cpu = Cpu { pc: MBASE as Addr, gpr: [0; GPR_NR] };
 
 pub fn pc_get() -> Addr {
   unsafe { CORE.pc }

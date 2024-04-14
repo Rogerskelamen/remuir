@@ -32,3 +32,23 @@ pub fn gpr_set(idx: usize, reg_wb: Word) {
     CORE.gpr[idx] = reg_wb;
   }
 }
+
+#[rustfmt::skip]
+pub fn _isa_gpr_print() {
+  let reg_name: [&str;32] = [
+    "$0", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
+    "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
+    "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7",
+    "s8", "s9", "s10", "s11", "t3", "t4", "t5", "t6"
+  ];
+  unsafe {
+    for (id, reg) in CORE.gpr.iter().enumerate() {
+      println!(
+        "{:<12}{:<16}{}",
+        reg_name[id],
+        format!("{:#x}", reg),
+        reg
+      )
+    }
+  }
+}

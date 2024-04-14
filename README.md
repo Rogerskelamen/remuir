@@ -8,6 +8,18 @@ So why not combine them together?
 
 Here comes remuir, named from RISC-V Emulator In Rust, is a simple RISC-V emulator to run riscv binary code which is inspired from an educational emulator [nemu](https://github.com/NJU-ProjectN/nemu). Its goal is to become as usable as [Spike](https://github.com/riscv-software-src/riscv-isa-sim), but it may take more time in the future.
 
+## Spec
+
+For now, remuir supports only RV32I isa to execute code.
+
+Virtual machine in it:
+
+1. pc
+
+2. 32 gpr
+
+3. no csr regs (***TODO***)
+
 ## development log
 
 1. 从命令行参数中读入待载入的二进制文件路径

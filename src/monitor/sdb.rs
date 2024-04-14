@@ -8,7 +8,7 @@ static mut BATCH_MODE: bool = false;
 // type CmdFn = fn(String);
 //
 // struct CmdTable {
-//   
+//
 // }
 
 pub fn sdb_init(is_batch: bool) {
@@ -62,16 +62,14 @@ pub fn sdb_start() {
     }
     let id = l.find(' ').unwrap_or(l.len());
     println!("{}", id);
-    let args = if id >= l.len() {
-      ""
-    }else {
-      &l[id + 1..]
-    };
+    let args = if id >= l.len() { "" } else { &l[id + 1..] };
     match cmd {
       "c" => {
         cmd_c(args);
       }
-      _ => { println!("Unknow command '{}'", cmd)}
+      _ => {
+        println!("Unknow command '{}'", cmd)
+      }
     }
     println!("{}", l);
   }

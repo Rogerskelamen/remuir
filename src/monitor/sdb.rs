@@ -1,6 +1,6 @@
 use rustyline::Editor;
 
-use crate::{cpu::exec::cpu_exec, log, crumble};
+use crate::{cpu::exec::cpu_exec, crumble, log};
 
 static mut BATCH_MODE: bool = false;
 
@@ -15,7 +15,7 @@ fn rl_get(rl: &mut Editor<()>) -> String {
   match line_read {
     Ok(line) => {
       rl.add_history_entry(line.as_str());
-      return line
+      return line;
     }
     Err(e) => {
       crumble!("Error: {}", e);

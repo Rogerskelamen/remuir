@@ -1,7 +1,6 @@
-use crate::utils::config::{Byte, MBASE, MSIZE};
+use crate::{alert, memory::access::PMEM, utils::config::*};
 
-// 128KiB available RAM
-pub static mut PMEM: [Byte; MSIZE] = [0; MSIZE];
+use super::access::{check_bound, pmem_read, pmem_write};
 
 pub fn init_mem(buf: &Vec<Byte>) -> usize {
   println!("{{");
@@ -37,4 +36,18 @@ pub fn load_default_img() -> Vec<u8> {
     .unwrap();
   let buf = img.to_vec();
   buf
+}
+
+pub fn mem_read(addr: Addr, len: usize) -> Word {
+  if !check_bound(addr, len) {
+    alert!(false, "Address [{:#x} - {:#x}] out of Memory", addr, addr as usize + len);
+  }
+  pmem_read(addr, len)
+}
+
+pub fn mem_write(addr: Addr, data: Word, len: usize) {
+  if !check_bound(addr, len) {
+    alert!(false, "Address [{:#x} - {:#x}] out of Memory", addr, addr as usize + len);
+  }
+  pmem_write(addr, data, len);
 }

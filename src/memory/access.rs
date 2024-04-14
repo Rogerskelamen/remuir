@@ -1,6 +1,7 @@
-use crate::{alert, crumble, utils::config::*};
+use crate::{crumble, utils::config::*};
 
-use super::pmem::PMEM;
+// 128KiB available RAM
+pub static mut PMEM: [Byte; MSIZE] = [0; MSIZE];
 
 fn pmem_get(addr: Addr) -> Byte {
   unsafe { PMEM[addr as usize - MBASE] }
@@ -12,25 +13,11 @@ fn pmem_set(addr: Addr, byte: u8) {
   }
 }
 
-fn check_bound(addr: Addr, len: usize) -> bool {
+pub fn check_bound(addr: Addr, len: usize) -> bool {
   addr as usize >= MBASE && addr as usize + len <= MBASE + MSIZE
 }
 
-pub fn mem_read(addr: Addr, len: usize) -> Word {
-  if !check_bound(addr, len) {
-    alert!(false, "Address [{:#x} - {:#x}] out of Memory", addr, addr as usize + len);
-  }
-  pmem_read(addr, len)
-}
-
-pub fn mem_write(addr: Addr, data: Word, len: usize) {
-  if !check_bound(addr, len) {
-    alert!(false, "Address [{:#x} - {:#x}] out of Memory", addr, addr as usize + len);
-  }
-  pmem_write(addr, data, len);
-}
-
-fn pmem_read(addr: Addr, len: usize) -> Word {
+pub fn pmem_read(addr: Addr, len: usize) -> Word {
   match len {
     1 => pmem_get(addr) as Word,
     2 => u16::from_ne_bytes([pmem_get(addr), pmem_get(addr + 1)]) as Word,
@@ -46,7 +33,7 @@ fn pmem_read(addr: Addr, len: usize) -> Word {
   }
 }
 
-fn pmem_write(addr: Addr, data: Word, len: usize) {
+pub fn pmem_write(addr: Addr, data: Word, len: usize) {
   match len {
     1 => {
       pmem_set(addr, data as Byte);

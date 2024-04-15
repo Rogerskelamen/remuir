@@ -28,7 +28,7 @@ pub fn pmem_read(addr: Addr, len: usize) -> Word {
       pmem_get(addr + 3),
     ]),
     _ => {
-      crumble!("Address align length [{}] is invalid, expect [1/2/4]", len);
+      crumble!("Address align length [{len}] is invalid, expect [1/2/4]");
     }
   }
 }
@@ -50,7 +50,7 @@ pub fn pmem_write(addr: Addr, data: Word, len: usize) {
       }
     }
     _ => {
-      crumble!("Address align length [{}] is invalid, expect [1/2/4]", len);
+      crumble!("Address align length [{len}] is invalid, expect [1/2/4]");
     }
   }
 }

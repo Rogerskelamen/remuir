@@ -7,7 +7,7 @@ mod memory;
 mod monitor;
 mod utils;
 
-use engine::init::{engine_start, exit_on_engine};
+use engine::init::{engine_start, exit_from_engine};
 use monitor::init::init_monitor;
 
 fn main() {
@@ -18,5 +18,5 @@ fn main() {
   engine_start();
 
   /* Exit analysis */
-  exit_on_engine();
+  exit_from_engine();
 }

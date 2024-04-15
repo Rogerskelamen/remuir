@@ -41,3 +41,5 @@ Virtual machine in it:
 9. 设置sdb的命令行工具
 
 10. 考虑如何将difftest引入到remuir中
+
+11. 考虑使用llvm的反汇编接口实现二进制指令到指令字符串的转化

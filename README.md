@@ -6,7 +6,7 @@ Everyone loves Rust!
 
 So why not combine them together?
 
-Here comes remuir, named from RISC-V Emulator In Rust, is a simple RISC-V emulator to run riscv binary code which is inspired from an educational emulator [nemu](https://github.com/NJU-ProjectN/nemu). Its goal is to become as usable as [Spike](https://github.com/riscv-software-src/riscv-isa-sim), but it may take more time in the future.
+Here comes remuir, named from RISC-V Emulator In Rust, is a simple RISC-V emulator to run riscv binary code which is inspired from an educational emulator [nemu](https://github.com/NJU-ProjectN/nemu). Its goal is to become as usable as [Spike](https://github.com/riscv-software-src/riscv-isa-sim), but it may take a long way to make.
 
 ## Spec
 

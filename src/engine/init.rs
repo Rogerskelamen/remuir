@@ -10,7 +10,7 @@ pub fn engine_start() {
 
 pub fn exit_from_engine() {
   unsafe {
-    if matches!(EMUSTATE.state, ExecState::End) && EMUSTATE.halt_ret == 0 {
+    if EMUSTATE.state == ExecState::End && EMUSTATE.halt_ret == 0 {
       println!("Exit safely");
       process::exit(0);
     } else {

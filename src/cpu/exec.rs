@@ -97,7 +97,7 @@ fn execute(mut n: usize) {
     /* some work after exec */
     unsafe {
       INST_CNT += 1;
-      if !matches!(EMUSTATE.state, ExecState::Running) {
+      if EMUSTATE.state != ExecState::Running {
         break;
       }
     }

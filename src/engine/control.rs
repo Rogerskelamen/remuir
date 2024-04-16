@@ -1,5 +1,6 @@
 use crate::{log, utils::config::Addr};
 
+#[derive(PartialEq)]
 pub enum ExecState {
   Running,
   Stop,

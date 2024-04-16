@@ -99,8 +99,7 @@ pub fn sdb_start() {
   loop {
     let input = rl_get(&mut rl);
     let cmd: &str;
-    let mut line = input.split_whitespace();
-    match line.next() {
+    match input.split_whitespace().next() {
       Some(s) => {
         cmd = s;
       }
@@ -108,11 +107,11 @@ pub fn sdb_start() {
         continue;
       }
     }
-    // let id = input.find(' ').unwrap_or(input.len());
-    // let args = if id >= input.len() { "" } else { &input[id + 1..] };
+    let id = input.find(' ').unwrap_or(input.len());
+    let args = if id >= input.len() { "" } else { &input[id + 1..] };
     for (idx, command) in CMDTAB.iter().enumerate() {
       if cmd == command.name {
-        if (command.func)(line as Iterator) < 0 {
+        if (command.func)(args) < 0 {
           return;
         }
         break;

@@ -5,7 +5,7 @@ use crate::{
   engine::control::{ExecState, EMUSTATE},
   isa::inst::isa_exec,
   log,
-  utils::config::*,
+  utils::{config::*, disasm::disasm},
 };
 
 use super::core::{pc_get, pc_set};
@@ -15,6 +15,7 @@ pub struct Decode {
   pub pc: Addr,
   pub npc: Addr,
   pub inst: Word,
+  pub log: String,
 }
 
 static mut TIMER: Duration = Duration::new(0, 0);
@@ -30,6 +31,10 @@ fn statistic() {
       log!("Finish running in less than 1 us and can not calculate the simulation frequency");
     }
   }
+}
+
+fn trace_and_difftest(s: &Decode) {
+  if CONFIG_ITRACE { println!("{}", s.log) }
 }
 
 /*
@@ -95,9 +100,11 @@ fn execute(mut n: usize) {
     /* some work before exec */
     exec_once(&mut s);
     /* some work after exec */
+    trace_and_difftest(&s);
     unsafe {
       INST_CNT += 1;
       if EMUSTATE.state != ExecState::Running {
+        if CONFIG_ITRACE { println!("Stopped at:\n{}", s.log) }
         break;
       }
     }
@@ -109,4 +116,7 @@ fn exec_once(s: &mut Decode) {
   s.pc = pc_get();
   isa_exec(s);
   pc_set(s.npc); // update pc
+  if CONFIG_ITRACE {
+    s.log = disasm(s.inst, s.pc);
+  }
 }

@@ -69,7 +69,6 @@ fn isa_decode(s: &mut Decode) {
     };
   }
 
-  println!("{:#x}: {:08x}", s.pc, s.inst);
   s.npc = s.pc + 4;
   match find_inst(s.inst) {
     "add"   => { instexec!(ImmType::R, gpr_set(rd, src1 + src2)); }

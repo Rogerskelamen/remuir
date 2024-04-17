@@ -32,14 +32,14 @@ pub fn find_inst(inst: Word) -> &'static str {
 }
 
 // TODO: try to improve the code to put down the time spending
-/*
- * == almost up to 70% time spend of execution ==
- *          ==  is taken place here ==
- * This is the real boss of time consuming
- * time spending will keep increasing for
- * every time when adding a new instruction
- * which produces another pattern match
- */
+///
+/// == almost up to 70% time spend of execution ==
+///        == is taken place here ==
+/// This is the real boss of time consuming
+/// time spending will keep increasing for
+/// every time when adding a new instruction
+/// which produces another pattern match
+///
 #[rustfmt::skip]
 fn inst_pat(inst: Word, pattern: &str) -> bool {
   // 1. generate key and mask to pair with inst later

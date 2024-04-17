@@ -20,6 +20,14 @@ Virtual machine in it:
 
 3. no csr regs (***TODO***)
 
+## Dependency
+
+1. structopt: for cli options handling
+
+2. rustyline: provide a shell prompt for sdb
+
+3. capstone: a disassembly engine (**need rust version greater than 1.60.0**)
+
 ## development log
 
 1. 从命令行参数中读入待载入的二进制文件路径

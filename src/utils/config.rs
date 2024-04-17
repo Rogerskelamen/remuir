@@ -1,3 +1,6 @@
+// user config
+pub const CONFIG_ITRACE: bool = true;
+
 // global constant config
 pub const MBASE: usize = 0x80000000;
 pub const MSIZE: usize = 0x8000000;

@@ -73,6 +73,7 @@ fn cmd_help(args: &str) -> isize {
 
 #[allow(unused_variables)]
 fn cmd_c(args: &str) -> isize {
+  /* infinite execute */
   cpu_exec(usize::MAX);
   return 0;
 }
@@ -89,7 +90,7 @@ pub fn sdb_start() {
   log!("Start sdb!");
   unsafe {
     if BATCH_MODE {
-      cpu_exec(usize::MAX);
+      cmd_c("");
       return;
     }
   }

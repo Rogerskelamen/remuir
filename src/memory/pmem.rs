@@ -14,8 +14,9 @@ pub fn init_mem(buf: &Vec<Byte>) -> usize {
   buf.len()
 }
 
+const DEF_IMG_NR: usize = 5;
 pub fn load_default_img() -> Vec<u8> {
-  let default_img: [u32; 5] = [
+  let default_img: [u32; DEF_IMG_NR] = [
     0x00000297, // auipc t0, 0
     0x00028823, // sb zero, 16(t0)
     0x0102c503, // lbu a0, 16(t0)
@@ -24,7 +25,7 @@ pub fn load_default_img() -> Vec<u8> {
   ];
 
   // IMG -> img : [u32;5] -> [u8;20]
-  let img: [u8; 20] = default_img
+  let img: [u8; DEF_IMG_NR * 4] = default_img
     .iter()
     .flat_map(|&x| {
       let mut bytes = [0; 4];

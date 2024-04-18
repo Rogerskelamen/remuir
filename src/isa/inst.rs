@@ -82,9 +82,27 @@ fn isa_decode(s: &mut Decode) {
     "or"    => { instexec!(ImmType::R, gpr_set(rd, src1 | src2)); }
     "and"   => { instexec!(ImmType::R, gpr_set(rd, src1 & src2)); }
 
-    "auipc" => { instexec!(ImmType::U, gpr_set(rd, s.pc + imm)); }
-    "sb"    => { instexec!(ImmType::S, mem_write(src1 + imm, src2, 1)); }
+    "addi"  => { instexec!(ImmType::I, gpr_set(rd, src1 + imm)); }
+    "slli"  => { instexec!(ImmType::I, gpr_set(rd, src1 << imm)); }
+    "slti"  => { instexec!(ImmType::I, gpr_set(rd, if (src1 as SWord) < (imm as SWord) {1} else {0})); }
+    "sltiu" => { instexec!(ImmType::I, gpr_set(rd, if src1 < imm {1} else {0})); }
+    "xori"  => { instexec!(ImmType::I, gpr_set(rd, src1 ^ imm)); }
+    "srli"  => { instexec!(ImmType::I, gpr_set(rd, src1 >> imm)); }
+    "srai"  => { instexec!(ImmType::I, gpr_set(rd, (src1 as SWord >> imm) as Word)); }
+    "ori"   => { instexec!(ImmType::I, gpr_set(rd, src1 | imm)); }
+    "andi"  => { instexec!(ImmType::I, gpr_set(rd, src1 & imm)); }
+
+    "lb"    => { instexec!(ImmType::I, gpr_set(rd, expand_signed(mem_read(src1 + imm, 1), 8))); }
+    "lh"    => { instexec!(ImmType::I, gpr_set(rd, expand_signed(mem_read(src1 + imm, 2), 16))); }
+    "lw"    => { instexec!(ImmType::I, gpr_set(rd, expand_signed(mem_read(src1 + imm, 4), 32))); }
     "lbu"   => { instexec!(ImmType::I, gpr_set(rd, mem_read(src1 + imm, 1))); }
+    "lhu"   => { instexec!(ImmType::I, gpr_set(rd, mem_read(src1 + imm, 2))); }
+    "lwu"   => { instexec!(ImmType::I, gpr_set(rd, mem_read(src1 + imm, 4))); }
+    "sb"    => { instexec!(ImmType::S, mem_write(src1 + imm, src2, 1)); }
+    "sh"    => { instexec!(ImmType::S, mem_write(src1 + imm, src2, 2)); }
+    "sw"    => { instexec!(ImmType::S, mem_write(src1 + imm, src2, 4)); }
+
+    "auipc" => { instexec!(ImmType::U, gpr_set(rd, s.pc + imm)); }
 
     "ebreak" => { set_emu_state(ExecState::End, s.pc, gpr_get(10) as usize); } // state = end
     "inv"    => { invalid_inst(s.pc); } // state = abort

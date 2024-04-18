@@ -28,6 +28,14 @@ Virtual machine in it:
 
 3. capstone: a disassembly engine (**need rust version greater than 1.60.0**)
 
+## Problem
+
+rust suggests that user should reconsider it when trying to use global mutable variables. However, I use global mutable variables(*in `static mut` style*) almost everywhere in my project. It's easy to make such design because the state of CPU and Memory is accessible by modules for most of time.
+
+If not using global mutable variables, another way is to implement CPU and Memory as trait object, every state access can only caused by call function of those objects. To reach the goal, I have to restruct the project, mainly the `cpu`, `isa`, `memory` module will be rewritten. (*A great work to go*)
+
+I decide to open another branch to do it in the future.
+
 ## development log
 
 1. 从命令行参数中读入待载入的二进制文件路径

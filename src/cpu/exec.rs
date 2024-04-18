@@ -33,15 +33,16 @@ fn statistic() {
   }
 }
 
+#[rustfmt::skip]
 fn trace_and_difftest(s: &Decode) {
   if CONFIG_ITRACE { println!("{}", s.log) }
 }
 
-/*
- * Execute for n times
- * Statistic the process,
- * Control Engine status
- */
+///
+/// Execute for n times
+/// Statistic the process,
+/// Control Engine status
+///
 pub fn cpu_exec(n: usize) {
   unsafe {
     match EMUSTATE.state {
@@ -90,10 +91,11 @@ pub fn cpu_exec(n: usize) {
   }
 }
 
-/*
- * Execute for n times
- * But do some extra work during the time
- */
+///
+/// Execute for n times
+/// But do some extra work during the time
+///
+#[rustfmt::skip]
 fn execute(mut n: usize) {
   let mut s = Decode::default();
   while n > 0 {

@@ -56,6 +56,7 @@ I decide to open another branch to do it in the future.
 
 9. 设置sdb的命令行工具
 
-10. 考虑如何将difftest引入到remuir中
+10. 考虑使用llvm的反汇编接口实现二进制指令到指令字符串的转化(这里使用的是capstone)
 
-11. 考虑使用llvm的反汇编接口实现二进制指令到指令字符串的转化
+11. 考虑如何将difftest引入到remuir中，应该可以用rust调用c函数
+

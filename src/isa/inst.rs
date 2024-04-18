@@ -82,6 +82,11 @@ fn isa_decode(s: &mut Decode) {
     "or"    => { instexec!(ImmType::R, gpr_set(rd, src1 | src2)); }
     "and"   => { instexec!(ImmType::R, gpr_set(rd, src1 & src2)); }
 
+    "auipc" => { instexec!(ImmType::U, gpr_set(rd, s.pc + imm)); }
+    "lui"   => { instexec!(ImmType::U, gpr_set(rd, imm)); }
+    "jal"   => { instexec!(ImmType::J, gpr_set(rd, s.pc + 4), s.npc = s.pc+imm); }
+    "jalr"  => { instexec!(ImmType::I, gpr_set(rd, s.pc + 4), s.npc = src1+imm); }
+
     "addi"  => { instexec!(ImmType::I, gpr_set(rd, src1 + imm)); }
     "slli"  => { instexec!(ImmType::I, gpr_set(rd, src1 << imm)); }
     "slti"  => { instexec!(ImmType::I, gpr_set(rd, if (src1 as SWord) < (imm as SWord) {1} else {0})); }
@@ -102,7 +107,12 @@ fn isa_decode(s: &mut Decode) {
     "sh"    => { instexec!(ImmType::S, mem_write(src1 + imm, src2, 2)); }
     "sw"    => { instexec!(ImmType::S, mem_write(src1 + imm, src2, 4)); }
 
-    "auipc" => { instexec!(ImmType::U, gpr_set(rd, s.pc + imm)); }
+    "beq"   => { instexec!(ImmType::B, if src1 == src2 { s.npc = s.pc+imm }); }
+    "bne"   => { instexec!(ImmType::B, if src1 != src2 { s.npc = s.pc+imm }); }
+    "blt"   => { instexec!(ImmType::B, if (src1 as SWord) < (src2 as SWord) { s.npc = s.pc+imm }); }
+    "bge"   => { instexec!(ImmType::B, if (src1 as SWord) >= (src2 as SWord) { s.npc = s.pc+imm }); }
+    "bltu"  => { instexec!(ImmType::B, if src1 < src2 { s.npc = s.pc+imm }); }
+    "bgeu"  => { instexec!(ImmType::B, if src1 >= src2 { s.npc = s.pc+imm }); }
 
     "ebreak" => { set_emu_state(ExecState::End, s.pc, gpr_get(10) as usize); } // state = end
     "inv"    => { invalid_inst(s.pc); } // state = abort

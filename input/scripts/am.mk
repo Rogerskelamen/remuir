@@ -35,13 +35,13 @@ CFLAGS  += -fdata-sections -ffunction-sections
 CFLAGS  += -I$(INPUT)/include
 CFLAGS  += -DMAINARGS=\"$(mainargs)\"
 
-ASFLAGS += $(COOMMON_CFLAGS) -O0
+ASFLAGS += $(COMMON_CFLAGS) -O0
 ASFLAGS += -I$(INPUT)/include
 
+LDFLAGS += -melf32lriscv
 LDFLAGS += -T $(LINKER) \
 		   --defsym=_pmem_start=0x80000000 --defsym=_entry_offset=0x0
 LDFLAGS += --gc-sections -e _start
-LDFLAGS += -melf32lriscv
 
 # Compilation Rules
 # Have to add input prefix to '.c' files

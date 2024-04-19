@@ -71,8 +71,8 @@ fn isa_decode(s: &mut Decode) {
 
   s.npc = s.pc + 4;
   match find_inst(s.inst) {
-    "add"   => { instexec!(ImmType::R, gpr_set(rd, src1 + src2)); }
-    "sub"   => { instexec!(ImmType::R, gpr_set(rd, src1 - src2)); }
+    "add"   => { instexec!(ImmType::R, gpr_set(rd, src1.wrapping_add(src2))); }
+    "sub"   => { instexec!(ImmType::R, gpr_set(rd, src1.wrapping_sub(src2))); }
     "sll"   => { instexec!(ImmType::R, gpr_set(rd, src1 << src2)); }
     "slt"   => { instexec!(ImmType::R, gpr_set(rd, if (src1 as SWord) < (src2 as SWord) {1} else {0})); }
     "sltu"  => { instexec!(ImmType::R, gpr_set(rd, if src1 < src2 {1} else {0})); }
@@ -82,12 +82,12 @@ fn isa_decode(s: &mut Decode) {
     "or"    => { instexec!(ImmType::R, gpr_set(rd, src1 | src2)); }
     "and"   => { instexec!(ImmType::R, gpr_set(rd, src1 & src2)); }
 
-    "auipc" => { instexec!(ImmType::U, gpr_set(rd, s.pc + imm)); }
+    "auipc" => { instexec!(ImmType::U, gpr_set(rd, s.pc.wrapping_add(imm))); }
     "lui"   => { instexec!(ImmType::U, gpr_set(rd, imm)); }
-    "jal"   => { instexec!(ImmType::J, gpr_set(rd, s.pc + 4), s.npc = s.pc+imm); }
-    "jalr"  => { instexec!(ImmType::I, gpr_set(rd, s.pc + 4), s.npc = src1+imm); }
+    "jal"   => { instexec!(ImmType::J, gpr_set(rd, s.pc + 4), s.npc = s.pc.wrapping_add(imm)); }
+    "jalr"  => { instexec!(ImmType::I, gpr_set(rd, s.pc + 4), s.npc = src1.wrapping_add(imm)); }
 
-    "addi"  => { instexec!(ImmType::I, gpr_set(rd, src1 + imm)); }
+    "addi"  => { instexec!(ImmType::I, gpr_set(rd, src1.wrapping_add(imm))); }
     "slli"  => { instexec!(ImmType::I, gpr_set(rd, src1 << imm)); }
     "slti"  => { instexec!(ImmType::I, gpr_set(rd, if (src1 as SWord) < (imm as SWord) {1} else {0})); }
     "sltiu" => { instexec!(ImmType::I, gpr_set(rd, if src1 < imm {1} else {0})); }
@@ -97,22 +97,22 @@ fn isa_decode(s: &mut Decode) {
     "ori"   => { instexec!(ImmType::I, gpr_set(rd, src1 | imm)); }
     "andi"  => { instexec!(ImmType::I, gpr_set(rd, src1 & imm)); }
 
-    "lb"    => { instexec!(ImmType::I, gpr_set(rd, expand_signed(mem_read(src1 + imm, 1), 8))); }
-    "lh"    => { instexec!(ImmType::I, gpr_set(rd, expand_signed(mem_read(src1 + imm, 2), 16))); }
-    "lw"    => { instexec!(ImmType::I, gpr_set(rd, expand_signed(mem_read(src1 + imm, 4), 32))); }
-    "lbu"   => { instexec!(ImmType::I, gpr_set(rd, mem_read(src1 + imm, 1))); }
-    "lhu"   => { instexec!(ImmType::I, gpr_set(rd, mem_read(src1 + imm, 2))); }
-    "lwu"   => { instexec!(ImmType::I, gpr_set(rd, mem_read(src1 + imm, 4))); }
-    "sb"    => { instexec!(ImmType::S, mem_write(src1 + imm, src2, 1)); }
-    "sh"    => { instexec!(ImmType::S, mem_write(src1 + imm, src2, 2)); }
-    "sw"    => { instexec!(ImmType::S, mem_write(src1 + imm, src2, 4)); }
+    "lb"    => { instexec!(ImmType::I, gpr_set(rd, expand_signed(mem_read(src1.wrapping_add(imm), 1), 8))); }
+    "lh"    => { instexec!(ImmType::I, gpr_set(rd, expand_signed(mem_read(src1.wrapping_add(imm), 2), 16))); }
+    "lw"    => { instexec!(ImmType::I, gpr_set(rd, expand_signed(mem_read(src1.wrapping_add(imm), 4), 32))); }
+    "lbu"   => { instexec!(ImmType::I, gpr_set(rd, mem_read(src1.wrapping_add(imm), 1))); }
+    "lhu"   => { instexec!(ImmType::I, gpr_set(rd, mem_read(src1.wrapping_add(imm), 2))); }
+    "lwu"   => { instexec!(ImmType::I, gpr_set(rd, mem_read(src1.wrapping_add(imm), 4))); }
+    "sb"    => { instexec!(ImmType::S, mem_write(src1.wrapping_add(imm), src2, 1)); }
+    "sh"    => { instexec!(ImmType::S, mem_write(src1.wrapping_add(imm), src2, 2)); }
+    "sw"    => { instexec!(ImmType::S, mem_write(src1.wrapping_add(imm), src2, 4)); }
 
-    "beq"   => { instexec!(ImmType::B, if src1 == src2 { s.npc = s.pc+imm }); }
-    "bne"   => { instexec!(ImmType::B, if src1 != src2 { s.npc = s.pc+imm }); }
-    "blt"   => { instexec!(ImmType::B, if (src1 as SWord) < (src2 as SWord) { s.npc = s.pc+imm }); }
-    "bge"   => { instexec!(ImmType::B, if (src1 as SWord) >= (src2 as SWord) { s.npc = s.pc+imm }); }
-    "bltu"  => { instexec!(ImmType::B, if src1 < src2 { s.npc = s.pc+imm }); }
-    "bgeu"  => { instexec!(ImmType::B, if src1 >= src2 { s.npc = s.pc+imm }); }
+    "beq"   => { instexec!(ImmType::B, if src1 == src2 { s.npc = s.pc.wrapping_add(imm) }); }
+    "bne"   => { instexec!(ImmType::B, if src1 != src2 { s.npc = s.pc.wrapping_add(imm) }); }
+    "blt"   => { instexec!(ImmType::B, if (src1 as SWord) < (src2 as SWord) { s.npc = s.pc.wrapping_add(imm) }); }
+    "bge"   => { instexec!(ImmType::B, if (src1 as SWord) >= (src2 as SWord) { s.npc = s.pc.wrapping_add(imm) }); }
+    "bltu"  => { instexec!(ImmType::B, if src1 < src2 { s.npc = s.pc.wrapping_add(imm) }); }
+    "bgeu"  => { instexec!(ImmType::B, if src1 >= src2 { s.npc = s.pc.wrapping_add(imm) }); }
 
     "ebreak" => { set_emu_state(ExecState::End, s.pc, gpr_get(10) as usize); } // state = end
     "inv"    => { invalid_inst(s.pc); } // state = abort

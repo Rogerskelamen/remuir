@@ -18,7 +18,7 @@ struct CmdTable {
   func: CmdFn,
 }
 
-const NR_CMD: usize = 3;
+const NR_CMD: usize = 4;
 
 const CMDTAB: [CmdTable; NR_CMD] = [
   CmdTable {
@@ -28,6 +28,7 @@ const CMDTAB: [CmdTable; NR_CMD] = [
   },
   CmdTable { name: "c", desc: "Continue the execution of the program", func: cmd_c },
   CmdTable { name: "q", desc: "Exit remuir", func: cmd_q },
+  CmdTable { name: "si", desc: "Step execute [N] instructions, N=1 if N is not specified", func: cmd_si },
 ];
 
 pub fn sdb_init(is_batch: bool) {
@@ -84,6 +85,21 @@ fn cmd_q(args: &str) -> isize {
     EMUSTATE.state = ExecState::End;
   }
   return -1;
+}
+
+fn cmd_si(args: &str) -> isize {
+  match args.split_whitespace().next() {
+    Some(arg) => {
+      match arg.parse::<usize>() {
+        Ok(n) => { cpu_exec(n); }
+        Err(_) => { println!("Please Input a positive number!"); }
+      }
+    }
+    None => {
+      cpu_exec(1);
+    }
+  }
+  return 0;
 }
 
 pub fn sdb_start() {

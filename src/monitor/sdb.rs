@@ -1,7 +1,7 @@
 use rustyline::Editor;
 
 use crate::{
-  cpu::exec::cpu_exec,
+  cpu::{core::isa_gpr_print, exec::cpu_exec},
   crumble,
   engine::control::{ExecState, EMUSTATE},
   log,
@@ -18,7 +18,7 @@ struct CmdTable {
   func: CmdFn,
 }
 
-const NR_CMD: usize = 4;
+const NR_CMD: usize = 5;
 
 const CMDTAB: [CmdTable; NR_CMD] = [
   CmdTable {
@@ -33,6 +33,7 @@ const CMDTAB: [CmdTable; NR_CMD] = [
     desc: "Step execute [N] instructions, N=1 if N is not specified",
     func: cmd_si,
   },
+  CmdTable { name: "info", desc: "Print state of the program [r/w]", func: cmd_info },
 ];
 
 pub fn sdb_init(is_batch: bool) {
@@ -106,6 +107,22 @@ fn cmd_si(args: &str) -> isize {
     }
     None => {
       cpu_exec(1);
+    }
+  }
+  return 0;
+}
+
+fn cmd_info(args: &str) -> isize {
+  match args.split_whitespace().next() {
+    Some(arg) => {
+      if arg == "r" {
+        isa_gpr_print();
+      } else {
+        println!("Subcommand not found");
+      }
+    }
+    None => {
+      println!("Please give a subcommand [r/w]");
     }
   }
   return 0;

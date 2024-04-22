@@ -106,13 +106,13 @@ fn cmd_si(args: &str) -> isize {
         /* step execute */
         Ok(n) => {
           if n == 0 {
-            println!("Please Input a positive number");
+            println!("Please input a positive number");
             return 0;
           }
           cpu_exec(n);
         }
         Err(_) => {
-          println!("Please Input a positive number");
+          println!("Please input a positive number");
         }
       }
     }
@@ -145,7 +145,7 @@ fn cmd_x(args: &str) -> isize {
     Some(n) => match n.parse::<usize>() {
       Ok(n) => {
         if n == 0 {
-          println!("Please Input a positive number");
+          println!("Please input a positive number");
           return 0;
         }
         match args.next() {
@@ -174,7 +174,7 @@ fn cmd_x(args: &str) -> isize {
         }
       }
       Err(_) => {
-        println!("Please Input a positive number");
+        println!("Please input a positive number");
       }
     },
     None => {

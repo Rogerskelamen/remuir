@@ -28,7 +28,11 @@ const CMDTAB: [CmdTable; NR_CMD] = [
   },
   CmdTable { name: "c", desc: "Continue the execution of the program", func: cmd_c },
   CmdTable { name: "q", desc: "Exit remuir", func: cmd_q },
-  CmdTable { name: "si", desc: "Step execute [N] instructions, N=1 if N is not specified", func: cmd_si },
+  CmdTable {
+    name: "si",
+    desc: "Step execute [N] instructions, N=1 if N is not specified",
+    func: cmd_si,
+  },
 ];
 
 pub fn sdb_init(is_batch: bool) {
@@ -56,7 +60,7 @@ fn cmd_help(args: &str) -> isize {
     Some(arg) => {
       for cmd in CMDTAB.iter() {
         if cmd.name == arg {
-          println!("{} - {}", cmd.name, cmd.desc);
+          println!("{:<8} - {}", cmd.name, cmd.desc);
           return 0;
         }
       }
@@ -65,7 +69,7 @@ fn cmd_help(args: &str) -> isize {
     }
     None => {
       for cmd in CMDTAB.iter() {
-        println!("{} - {}", cmd.name, cmd.desc);
+        println!("{:<8} - {}", cmd.name, cmd.desc);
       }
       return 0;
     }
@@ -91,8 +95,13 @@ fn cmd_si(args: &str) -> isize {
   match args.split_whitespace().next() {
     Some(arg) => {
       match arg.parse::<usize>() {
-        Ok(n) => { cpu_exec(n); }
-        Err(_) => { println!("Please Input a positive number!"); }
+        /* step execute */
+        Ok(n) => {
+          cpu_exec(n);
+        }
+        Err(_) => {
+          println!("Please Input a positive number!");
+        }
       }
     }
     None => {

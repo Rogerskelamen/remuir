@@ -1,5 +1,6 @@
-*/*
+# common ignore
 *
+*/*
 !*/
 
 # common files
@@ -12,9 +13,11 @@
 # C
 !*.cc
 !*.[cSh]
+!linker.ld
 
 # rust
-target/
+/target/
 !*.rs
 !Cargo.toml
 !Cargo.lock
+!.rustfmt.toml

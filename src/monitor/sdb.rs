@@ -43,7 +43,7 @@ const CMDTAB: [CmdTable; NR_CMD] = [
   },
 ];
 
-pub fn sdb_init(is_batch: bool) {
+pub fn init_sdb(is_batch: bool) {
   unsafe {
     BATCH_MODE = is_batch;
   }

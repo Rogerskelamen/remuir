@@ -4,10 +4,10 @@ use structopt::StructOpt;
 
 use crate::{
   log,
-  memory::pmem::{init_mem, load_default_img},
+  memory::pmem::{init_mem, load_default_img}, cpu::difftest::dut::init_difftest,
 };
 
-use super::sdb::sdb_init;
+use super::sdb::init_sdb;
 
 #[derive(StructOpt, Debug)]
 struct Opt {
@@ -16,6 +16,9 @@ struct Opt {
 
   #[structopt(short = "-b", long = "--batch", help = "run in batch mode")]
   batch: bool,
+
+  #[structopt(short = "-d", long = "--diff", help = "load difftest reference `so`")]
+  diff: Option<PathBuf>,
 }
 
 pub fn init_monitor() {
@@ -27,7 +30,9 @@ pub fn init_monitor() {
   let imgsize = load_img(args.image);
   log!("Image loaded {} bytes", imgsize);
 
-  sdb_init(args.batch);
+  init_sdb(args.batch);
+
+  init_difftest(args.diff);
 
   welcome(args.batch);
 }

@@ -1,3 +1,3 @@
-# y for yes, n for no
+# y -> yes, n -> no
 # whether to turn on difftest
-CONFIG_DIFFTEST=n
+CONFIG_DIFFTEST=y

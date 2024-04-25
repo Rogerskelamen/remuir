@@ -1,2 +1,20 @@
-/target
-/input/build
+*/*
+*
+!*/
+
+# common files
+!Makefile
+!*.mk
+!.gitignore
+!LICENSE
+!README.md
+
+# C
+!*.cc
+!*.[cSh]
+
+# rust
+target/
+!*.rs
+!Cargo.toml
+!Cargo.lock

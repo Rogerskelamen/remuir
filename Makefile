@@ -14,16 +14,21 @@ CXXFLAGS = $(CFLAGS) -ffreestanding -fno-rtti -fno-exceptions
 ASFLAGS  = -MMD
 LDFLAGS  = -z noexecstack
 
+-include input/scripts/am.mk
+include tools/difftest.mk
+
+override ARGS += $(ARGS_DIFF)
+
 # Tags
 all: default
 
 # Default run mode: no image loaded
-default: build
+default: build $(DIFF_REF_SO)
 	@$(BIN) $(ARGS)
 
 # Default binary is dummy.bin
 # help: make run NAME=[C file in input/tests/]
-run: build image
+run: build image $(DIFF_REF_SO)
 	@$(BIN) $(IMAGE).bin $(ARGS)
 
 build:
@@ -33,7 +38,7 @@ build:
 release:
 	@cargo build --release
 
-prod: image
+prod: image $(DIFF_REF_SO)
 	@cargo run --release $(IMAGE).bin $(ARGS)
 
 lint:
@@ -53,6 +58,6 @@ count:
 	@echo [rust]
 	@find ./src -name "*.rs" -type f | xargs wc -l
 
--include input/scripts/am.mk
+.DEFAULT_GOAL := all
 
 .PHONY: all default run build release lint format clean count image

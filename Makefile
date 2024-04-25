@@ -14,6 +14,7 @@ CXXFLAGS = $(CFLAGS) -ffreestanding -fno-rtti -fno-exceptions
 ASFLAGS  = -MMD
 LDFLAGS  = -z noexecstack
 
+include config.mk
 -include input/scripts/am.mk
 include tools/difftest.mk
 

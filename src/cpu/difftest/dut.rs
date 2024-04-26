@@ -1,34 +1,30 @@
-use std::{ffi::c_void, path::PathBuf, sync::Arc};
+use std::{ffi::{c_int, c_void}, path::PathBuf, sync::Mutex};
 
-struct HasDifftest {
-  exist: bool,
-  libstr: &'static str
-}
+use lazy_static::lazy_static;
 
-static mut HAS_DIFFTEST: HasDifftest = HasDifftest {
-  exist: false,
-  libstr: ""
-};
-
-struct DifftestLib {
-  exist: bool,
-  lib: Arc<libloading::Library>,
-  difftest_memcpy: libloading::Symbol<'static, unsafe extern fn(u32, c_void, isize, bool)>
+lazy_static! {
+  static ref DIFF_MEMCPY: Mutex<Option<unsafe extern fn(u32, &c_void, isize, bool) -> c_void>> = Mutex::new(None);
 }
 
 pub fn init_difftest(diff: Option<PathBuf>) {
   match diff {
     Some(path) => {
-      unsafe {
-        HAS_DIFFTEST.exist = true;
-        let path_str = path.as_path().to_str().expect("Failed to load difftest lib path");
-        let boxed_str = path_str.to_owned().into_boxed_str();
-        HAS_DIFFTEST.libstr = Box::leak(boxed_str);
-      }
+      let lib = libloading::Library::new(path).unwrap();
+      let ref_difftest_init: libloading::Symbol<unsafe extern fn(c_int) -> c_void> = unsafe {
+        lib.get(b"difftest_init").expect("failed to load symbol [difftest_init]")
+      };
+      unsafe { ref_difftest_init(1234) };
+      let difftest_memcpy: libloading::Symbol<unsafe extern fn(u32, &c_void, isize, bool) -> c_void> = unsafe {
+          lib.get(b"difftest_memcpy").expect("failed to load symbol [difftest_memcpy]")
+      };
+      *DIFF_MEMCPY.lock().unwrap() = Some(*difftest_memcpy);
     }
     None => {}
   }
 }
 
-// let lib = libloading::Library::new(f).unwrap();
-// let func: libloading::Symbol<unsafe extern fn()> = lib.get(b"difftest_memcpy").unwrap();
+pub fn ref_difftest_memcpy(addr: u32, buf: &c_void, n: isize, direction: bool) -> c_void {
+  let func = DIFF_MEMCPY.lock().unwrap();
+  let func = func.as_ref().expect("Function not initialized");
+  unsafe { func(addr, buf, n, direction) }
+}

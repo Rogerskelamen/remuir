@@ -8,7 +8,7 @@ use crate::{
   utils::{config::*, disasm::disasm},
 };
 
-use super::core::{pc_get, pc_set};
+use super::{core::{pc_get, pc_set}, difftest::dut::{HAS_DIFFTEST, difftest_step}};
 
 #[derive(Default, Debug)]
 pub struct Decode {
@@ -35,7 +35,12 @@ fn statistic() {
 
 #[rustfmt::skip]
 fn trace_and_difftest(s: &Decode) {
-  if CONFIG_ITRACE { println!("{}", s.log) }
+  if CONFIG_ITRACE { println!("{}", s.log); }
+  unsafe {
+    if HAS_DIFFTEST {
+      difftest_step(s.pc, s.npc);
+    }
+  }
 }
 
 ///
@@ -58,7 +63,7 @@ pub fn cpu_exec(n: usize) {
 
   let timer_start = Instant::now();
 
-  // execute instructions
+  /* execute instructions */
   execute(n);
 
   let timer_end = Instant::now();

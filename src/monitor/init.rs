@@ -3,8 +3,9 @@ use std::{fs::File, io::Read, path::PathBuf};
 use structopt::StructOpt;
 
 use crate::{
+  cpu::difftest::dut::init_difftest,
   log,
-  memory::pmem::{init_mem, load_default_img}, cpu::difftest::dut::init_difftest,
+  memory::pmem::{init_mem, load_default_img},
 };
 
 use super::sdb::init_sdb;

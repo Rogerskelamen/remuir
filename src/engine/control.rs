@@ -1,4 +1,4 @@
-use crate::{log, utils::config::Addr};
+use crate::{cpu::difftest::dut::difftest_skip_ref, log, utils::config::Addr};
 
 #[derive(PartialEq)]
 pub enum ExecState {
@@ -17,6 +17,7 @@ pub struct EmuState {
 pub static mut EMUSTATE: EmuState = EmuState { state: ExecState::Stop, halt_pc: 0, halt_ret: 0 };
 
 pub fn set_emu_state(state: ExecState, pc: Addr, ret: usize) {
+  difftest_skip_ref();
   unsafe {
     EMUSTATE.state = state;
     EMUSTATE.halt_pc = pc;

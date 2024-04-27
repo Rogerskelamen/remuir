@@ -8,7 +8,10 @@ use crate::{
   utils::{config::*, disasm::disasm},
 };
 
-use super::{core::{pc_get, pc_set}, difftest::dut::{HAS_DIFFTEST, difftest_step}};
+use super::{
+  core::{pc_get, pc_set},
+  difftest::dut::{difftest_step, has_difftest},
+};
 
 #[derive(Default, Debug)]
 pub struct Decode {
@@ -36,11 +39,7 @@ fn statistic() {
 #[rustfmt::skip]
 fn trace_and_difftest(s: &Decode) {
   if CONFIG_ITRACE { println!("{}", s.log); }
-  unsafe {
-    if HAS_DIFFTEST {
-      difftest_step(s.pc);
-    }
-  }
+  if has_difftest() { difftest_step(s.pc); }
 }
 
 ///

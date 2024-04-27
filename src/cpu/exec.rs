@@ -38,7 +38,7 @@ fn trace_and_difftest(s: &Decode) {
   if CONFIG_ITRACE { println!("{}", s.log); }
   unsafe {
     if HAS_DIFFTEST {
-      difftest_step(s.pc, s.npc);
+      difftest_step(s.pc);
     }
   }
 }

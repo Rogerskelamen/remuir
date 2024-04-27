@@ -1,12 +1,10 @@
 use std::{
-  ffi::{c_int, c_void},
-  path::PathBuf,
-  sync::Mutex,
+  ffi::{c_int, c_void}, path::PathBuf, ptr::addr_of, sync::Mutex
 };
 
 use lazy_static::lazy_static;
 
-use crate::utils::config::Addr;
+use crate::{cpu::core::{gpr_get, isa_gpr_print, pc_get, Cpu, CORE, REGNAME}, engine::control::{ExecState, EMUSTATE}, log, memory::access::PMEM, utils::config::*};
 
 pub static mut HAS_DIFFTEST: bool = false;
 
@@ -23,15 +21,12 @@ lazy_static! {
     Mutex::new(None);
 }
 
-pub fn init_difftest(diff: Option<PathBuf>) {
+pub fn init_difftest(diff: Option<PathBuf>, img_size: usize) {
   match diff {
     Some(path) => {
       let lib = libloading::Library::new(path).unwrap();
       let ref_difftest_init: libloading::Symbol<unsafe extern "C" fn(c_int) -> c_void> =
         unsafe { lib.get(b"difftest_init").expect("failed to load symbol [difftest_init]") };
-
-      /* Initiailize simulator reference */
-      unsafe { ref_difftest_init(1234) };
 
       let difftest_memcpy: libloading::Symbol<
         unsafe extern "C" fn(u32, *mut c_void, usize, c_int) -> c_void,
@@ -46,9 +41,16 @@ pub fn init_difftest(diff: Option<PathBuf>) {
         unsafe { lib.get(b"difftest_exec").expect("failed to load symbol [difftest_exec]") };
       *DIFF_EXEC.lock().unwrap() = Some(*difftest_exec);
 
-      // unsafe {
-        // difftest_regcpy(CORE as c_void, DIFFTEST_TO_REF);
-      // }
+      unsafe {
+        /* Initiailize simulator reference */
+        ref_difftest_init(1234);
+
+        let pmem_ptr = addr_of!(PMEM) as *const [Byte; MSIZE];
+        difftest_memcpy(MBASE as Addr, pmem_ptr as *mut c_void, img_size, DIFFTEST_TO_REF);
+
+        let core_ptr = addr_of!(CORE) as *const Cpu;
+        difftest_regcpy(core_ptr as *mut c_void, DIFFTEST_TO_REF);
+      }
 
       unsafe { HAS_DIFFTEST = true; }
     }
@@ -56,11 +58,50 @@ pub fn init_difftest(diff: Option<PathBuf>) {
   }
 }
 
-pub fn difftest_step(pc: Addr, npc: Addr) {
-  
+pub fn difftest_step(pc: Addr) {
+  let ref_r: Cpu = Cpu::default();
+
+  /* Step execution */
+  ref_difftest_exec(1);
+  let ref_r_ptr = addr_of!(ref_r) as *const Cpu;
+  ref_difftest_regcpy(ref_r_ptr as *mut c_void, DIFFTEST_TO_DUT);
+
+  checkregs(ref_r, pc);
 }
 
-fn ref_difftest_memcpy(addr: u32, buf: *mut c_void, n: usize, direction: c_int) -> c_void {
+fn checkregs(ref_r: Cpu, pc: Addr) {
+  if !difftest_checkregs(ref_r, pc) {
+    unsafe {
+      EMUSTATE.state = ExecState::Abort;
+      EMUSTATE.halt_pc = pc;
+      isa_gpr_print();
+    }
+  }
+}
+
+fn difftest_checkregs(ref_r: Cpu, pc: Addr) -> bool {
+  /* Check for pc */
+  if !log_difftest_checkregs("pc", pc, ref_r.pc, pc_get()) {
+    return false;
+  }
+  /* Check for gpr */
+  for (i, reg) in ref_r.gpr.into_iter().enumerate() {
+    if !log_difftest_checkregs(REGNAME[i], pc, reg, gpr_get(i)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+fn log_difftest_checkregs(name: &str, pc: Addr, ref_r: Word, dut_r: Word) -> bool {
+  if ref_r != dut_r {
+    log!("{} is different after executing instruction at pc = {:#x}, right = {:#x}, wrong = {:#x}, diff = {:#x}", name, pc, ref_r, dut_r, ref_r ^ dut_r);
+    return false;
+  }
+  return true;
+}
+
+fn _ref_difftest_memcpy(addr: u32, buf: *mut c_void, n: usize, direction: c_int) -> c_void {
   let func = DIFF_MEMCPY.lock().unwrap();
   let func = func.as_ref().expect("Function not initialized");
   unsafe { func(addr, buf, n, direction) }

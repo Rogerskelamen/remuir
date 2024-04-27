@@ -94,7 +94,9 @@ fn cmd_c(args: &str) -> isize {
 #[allow(unused_variables)]
 fn cmd_q(args: &str) -> isize {
   unsafe {
-    EMUSTATE.state = ExecState::End;
+    if EMUSTATE.state == ExecState::Stop {
+      EMUSTATE.state = ExecState::End;
+    }
   }
   return -1;
 }

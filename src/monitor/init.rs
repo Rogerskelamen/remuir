@@ -33,7 +33,7 @@ pub fn init_monitor() {
 
   init_sdb(args.batch);
 
-  init_difftest(args.diff);
+  init_difftest(args.diff, imgsize);
 
   welcome(args.batch);
 }

@@ -60,3 +60,4 @@ I decide to open another branch to do it in the future.
 
 11. 考虑如何将difftest引入到remuir中，应该可以用rust调用c函数
 
+12. 利用实现好的difftest工具，完成剩余RISC-V指令的实现

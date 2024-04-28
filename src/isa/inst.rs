@@ -110,6 +110,7 @@ fn isa_decode(s: &mut Decode) {
     "ori"   => { instexec!(ImmType::I, gpr_set(rd, src1 | imm)); }
     "andi"  => { instexec!(ImmType::I, gpr_set(rd, src1 & imm)); }
 
+    /* 'ST/LD' operation */
     "lb"    => { instexec!(ImmType::I, gpr_set(rd, expand_signed(mem_read(src1.wrapping_add(imm), 1), 8))); }
     "lh"    => { instexec!(ImmType::I, gpr_set(rd, expand_signed(mem_read(src1.wrapping_add(imm), 2), 16))); }
     "lw"    => { instexec!(ImmType::I, gpr_set(rd, expand_signed(mem_read(src1.wrapping_add(imm), 4), 32))); }
@@ -127,6 +128,7 @@ fn isa_decode(s: &mut Decode) {
     "bltu"  => { instexec!(ImmType::B, if src1 < src2 { s.npc = s.pc.wrapping_add(imm) }); }
     "bgeu"  => { instexec!(ImmType::B, if src1 >= src2 { s.npc = s.pc.wrapping_add(imm) }); }
 
+    /* Environment instruction */
     "ebreak" => { set_emu_state(ExecState::End, s.pc, gpr_get(10) as usize); } // state = end
     "inv"    => { invalid_inst(s.pc); } // state = abort
 

@@ -1,3 +1,5 @@
+use std::mem::size_of;
+
 use crate::{
   cpu::{
     core::{gpr_get, gpr_set},
@@ -6,7 +8,7 @@ use crate::{
   crumble,
   engine::control::{invalid_inst, set_emu_state, ExecState},
   memory::pmem::{mem_read, mem_write},
-  utils::config::{SWord, Word},
+  utils::config::{SWord, Word, SDoubl, Doubl},
 };
 
 use super::decode::find_inst;
@@ -71,6 +73,7 @@ fn isa_decode(s: &mut Decode) {
 
   s.npc = s.pc + 4;
   match find_inst(s.inst) {
+    /* 'R' operation */
     "add"   => { instexec!(ImmType::R, gpr_set(rd, src1.wrapping_add(src2))); }
     "sub"   => { instexec!(ImmType::R, gpr_set(rd, src1.wrapping_sub(src2))); }
     "sll"   => { instexec!(ImmType::R, gpr_set(rd, src1 << src2)); }
@@ -82,11 +85,21 @@ fn isa_decode(s: &mut Decode) {
     "or"    => { instexec!(ImmType::R, gpr_set(rd, src1 | src2)); }
     "and"   => { instexec!(ImmType::R, gpr_set(rd, src1 & src2)); }
 
+    /* 'M' extension */
+    "mul"   => { instexec!(ImmType::R, gpr_set(rd, src1.wrapping_mul(src2))); }
+    "mulh"  => { instexec!(ImmType::R, gpr_set(rd, (src1 as SDoubl * src2 as SDoubl >> (size_of::<Word>() * 8)) as Word)); }
+    "mulhu" => { instexec!(ImmType::R, gpr_set(rd, (src1 as Doubl * src2 as Doubl >> (size_of::<Word>() * 8)) as Word)); }
+    "div"   => { instexec!(ImmType::R, gpr_set(rd, (src1 as SWord / src2 as SWord) as Word)); }
+    "divu"  => { instexec!(ImmType::R, gpr_set(rd, src1.wrapping_div(src2))); }
+    "rem"   => { instexec!(ImmType::R, gpr_set(rd, (src1 as SWord % src2 as SWord) as Word)); }
+    "remu"  => { instexec!(ImmType::R, gpr_set(rd, src1.wrapping_rem(src2))); }
+
     "auipc" => { instexec!(ImmType::U, gpr_set(rd, s.pc.wrapping_add(imm))); }
     "lui"   => { instexec!(ImmType::U, gpr_set(rd, imm)); }
     "jal"   => { instexec!(ImmType::J, gpr_set(rd, s.pc + 4), s.npc = s.pc.wrapping_add(imm)); }
     "jalr"  => { instexec!(ImmType::I, gpr_set(rd, s.pc + 4), s.npc = src1.wrapping_add(imm)); }
 
+    /* 'I' operation */
     "addi"  => { instexec!(ImmType::I, gpr_set(rd, src1.wrapping_add(imm))); }
     "slli"  => { instexec!(ImmType::I, gpr_set(rd, src1 << imm)); }
     "slti"  => { instexec!(ImmType::I, gpr_set(rd, if (src1 as SWord) < (imm as SWord) {1} else {0})); }

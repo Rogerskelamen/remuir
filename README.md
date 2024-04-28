@@ -28,6 +28,10 @@ Virtual machine in it:
 
 3. capstone: a disassembly engine (**need rust version greater than 1.60.0**)
 
+4. libloading: load C dynamic link library
+
+5. lazy_static: lazy load global static variable, this is for some global variable being initialized when program run after some time point
+
 ## Problem
 
 rust suggests that user should reconsider it when trying to use global mutable variables. However, I use global mutable variables(*in `static mut` style*) almost everywhere in my project. It's easy to make such design because the state of CPU and Memory is accessible by modules for most of time.

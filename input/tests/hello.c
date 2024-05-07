@@ -2,7 +2,8 @@
 
 int main() {
   char *hello = "hello, world\n";
-  for (int i = 0; i < 13; i++) {
-    putch(hello[i]);
+
+  for (int i = 0; i < 1000; i++) {
+    putstr(hello);
   }
 }

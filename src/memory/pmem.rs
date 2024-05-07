@@ -1,4 +1,4 @@
-use crate::{alert, memory::access::PMEM, utils::config::*};
+use crate::{alert, cpu::difftest::dut::difftest_skip_ref, memory::access::PMEM, utils::config::*};
 
 use super::access::{check_bound, pmem_read, pmem_write};
 
@@ -48,6 +48,11 @@ pub fn mem_read(addr: Addr, len: usize) -> Word {
 
 pub fn mem_write(addr: Addr, data: Word, len: usize) {
   if !check_bound(addr, len) {
+    if addr == SERIAL_PORT {
+      print!("{}", data as Byte as char);
+      difftest_skip_ref();
+      return;
+    }
     alert!(false, "Address [{:#x} - {:#x}] out of Memory", addr, addr as usize + len);
   }
   pmem_write(addr, data, len);

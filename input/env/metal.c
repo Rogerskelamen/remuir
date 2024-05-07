@@ -1,9 +1,13 @@
+#include <device.h>
+#include <stdint.h>
+
 int main(const char *args);
 
 static const char mainargs[] = MAINARGS;
 
 void putch(char ch) {
   // TODO
+  *(uint8_t *)SERIAL_PORT = ch;
 }
 
 void halt(int code) {

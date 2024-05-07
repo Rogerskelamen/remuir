@@ -16,7 +16,7 @@ use crate::{
 };
 
 static mut HAS_DIFFTEST: bool = false;
-static mut DIFFTEST_SKIP: bool = false;
+static mut IS_SKIP_REF: bool = false;
 
 const DIFFTEST_TO_DUT: c_int = 0;
 const DIFFTEST_TO_REF: c_int = 1;
@@ -67,17 +67,18 @@ pub fn init_difftest(diff: Option<PathBuf>, img_size: usize) {
 }
 
 pub fn difftest_step(pc: Addr) {
-  let ref_r: Cpu = Cpu::default();
-  let ref_r_ptr = addr_of!(ref_r) as *const Cpu;
-
   /* Check if skip */
   unsafe {
-    if DIFFTEST_SKIP {
-      ref_difftest_regcpy(ref_r_ptr as *mut c_void, DIFFTEST_TO_DUT);
-      DIFFTEST_SKIP = false;
+    if IS_SKIP_REF {
+      let core_ptr = addr_of!(CORE) as *const Cpu;
+      ref_difftest_regcpy(core_ptr as *mut c_void, DIFFTEST_TO_REF);
+      IS_SKIP_REF = false;
       return;
     }
   }
+
+  let ref_r: Cpu = Cpu::default();
+  let ref_r_ptr = addr_of!(ref_r) as *const Cpu;
 
   /* Step execution */
   ref_difftest_exec(1);
@@ -88,7 +89,7 @@ pub fn difftest_step(pc: Addr) {
 
 #[rustfmt::skip]
 pub fn difftest_skip_ref() {
-  unsafe { DIFFTEST_SKIP = true; }
+  unsafe { IS_SKIP_REF = true; }
 }
 
 pub fn has_difftest() -> bool {

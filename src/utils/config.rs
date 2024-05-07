@@ -6,6 +6,9 @@ pub const MBASE: usize = 0x80000000;
 pub const MSIZE: usize = 0x8000000;
 pub const GPR_NR: usize = 32;
 
+// io device address
+pub const SERIAL_PORT: Addr = 0xa00003f8;
+
 // type alias
 pub type Word = u32;
 pub type SWord = i32;

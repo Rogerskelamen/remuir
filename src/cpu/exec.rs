@@ -110,7 +110,7 @@ fn execute(mut n: usize) {
     unsafe {
       INST_CNT += 1;
       if EMUSTATE.state != ExecState::Running {
-        if CONFIG_ITRACE { println!("Stopped at:\n{}", s.log) }
+        if CONFIG_ITRACE { println!("Stopped at:\n{}", s.log); }
         break;
       }
     }

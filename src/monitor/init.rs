@@ -6,6 +6,7 @@ use crate::{
   cpu::difftest::dut::init_difftest,
   log,
   memory::pmem::{init_mem, load_default_img},
+  utils::config::CONFIG_ATRACE,
 };
 
 use super::sdb::init_sdb;
@@ -25,7 +26,9 @@ struct Opt {
 pub fn init_monitor() {
   /* Parse arguments */
   let args = Opt::from_args();
-  println!("{:#?}", args);
+  if CONFIG_ATRACE {
+    println!("{:#?}", args);
+  }
 
   /* Load image */
   let imgsize = load_img(args.image);
@@ -56,7 +59,7 @@ fn load_img(image: Option<PathBuf>) -> usize {
 
 fn welcome(isbatch: bool) {
   let name = "remuir";
-  println!("Welcome to \u{001b}[44;30;1m{}\u{001b}[0m!", name);
+  println!("### Welcome to \u{001b}[44;30;1m{}\u{001b}[0m! ###", name);
   if !isbatch {
     println!("For help, type \"help\"");
   }

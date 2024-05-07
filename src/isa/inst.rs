@@ -8,7 +8,7 @@ use crate::{
   crumble,
   engine::control::{invalid_inst, set_emu_state, ExecState},
   memory::pmem::{mem_read, mem_write},
-  utils::config::{SWord, Word, SDoubl, Doubl},
+  utils::config::{Doubl, SDoubl, SWord, Word},
 };
 
 use super::decode::find_inst;

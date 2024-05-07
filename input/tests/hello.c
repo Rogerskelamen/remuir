@@ -1,8 +1,8 @@
 #include <am.h>
 
 int main() {
-  char *hello = "hello, world";
-  for (int i = 0; i < 12; i++) {
+  char *hello = "hello, world\n";
+  for (int i = 0; i < 13; i++) {
     putch(hello[i]);
   }
 }

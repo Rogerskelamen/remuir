@@ -1,5 +1,6 @@
 // user config
-pub const CONFIG_ITRACE: bool = true;
+pub const CONFIG_ITRACE: bool = false;
+pub const CONFIG_ATRACE: bool = false; // trace for args
 
 // global constant config
 pub const MBASE: usize = 0x80000000;

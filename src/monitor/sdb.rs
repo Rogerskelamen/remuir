@@ -187,13 +187,15 @@ fn cmd_x(args: &str) -> isize {
 }
 
 pub fn sdb_start() {
-  log!("Start sdb!");
   unsafe {
     if BATCH_MODE {
       cmd_c("");
       return;
     }
   }
+
+  /* Head tip for sdb */
+  log!("Start sdb!");
 
   /* create shell-prompt */
   let mut rl = Editor::<()>::new();

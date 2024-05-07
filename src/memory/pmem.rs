@@ -2,15 +2,17 @@ use crate::{alert, cpu::difftest::dut::difftest_skip_ref, memory::access::PMEM, 
 
 use super::access::{check_bound, pmem_read, pmem_write};
 
+#[rustfmt::skip]
 pub fn init_mem(buf: &Vec<Byte>) -> usize {
-  println!("{{");
+  if CONFIG_ATRACE { println!("{{"); }
   for (idx, byte) in buf.iter().enumerate() {
-    unsafe {
-      PMEM[idx] = *byte;
+    unsafe { PMEM[idx] = *byte; }
+    if CONFIG_ATRACE {
+      println!("  {:#x}: {}", idx + MBASE, byte);
     }
-    println!("  {:#x}: {}", idx + MBASE, byte);
   }
-  println!("}}");
+  if CONFIG_ATRACE { println!("}}"); }
+
   buf.len()
 }
 

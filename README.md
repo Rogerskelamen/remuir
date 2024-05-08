@@ -34,11 +34,29 @@ Virtual machine in it:
 
 ## Problem
 
-rust suggests that user should reconsider it when trying to use global mutable variables. However, I use global mutable variables(*in `static mut` style*) almost everywhere in my project. It's easy to make such design because the state of CPU and Memory is accessible by modules for most of time.
+Rust suggests that user should reconsider it when trying to use global mutable variables. However, I use global mutable variables(*in `static mut` style*) almost everywhere in my project. It's easy to make such design because the state of CPU and Memory is accessible by modules for most of time.
 
 If not using global mutable variables, another way is to implement CPU and Memory as trait object, every state access can only caused by call function of those objects. To reach the goal, I have to restruct the project, mainly the `cpu`, `isa`, `memory` module will be rewritten. (*A great work to go*)
 
 I decide to open another branch to do it in the future.
+
+## FAQ
+
+If you turn on the difftest feature in `config.mk`, you may encounter trouble when compiling [spike](https://github.com/NJU-ProjectN/riscv-isa-sim) reference, which tells you `boost_regex` could not be linked. This is because an open issue for some OS, you could find more [here](https://github.com/riscv-software-src/riscv-isa-sim/issues/834). To solve the trouble, just modify the following file:
+
+```diff
+--- a/tools/spike-diff/Makefile
++++ b/tools/spike-diff/Makefile
+@@ -7,7 +7,7 @@ REPO_BUILD_PATH = $(REPO_PATH)/build
+ REPO_MAKEFILE = $(REPO_BUILD_PATH)/Makefile
+ $(REPO_MAKEFILE):
+ 	@mkdir -p $(@D)
+-	cd $(@D) && $(abspath $(REPO_PATH))/configure
++	cd $(@D) && $(abspath $(REPO_PATH))/configure --without-boost --without-boost-asio --without-boost-regex
+ 	sed -i -e 's/-g -O2/-O2/' $@
+
+ SPIKE = $(REPO_BUILD_PATH)/spike
+```
 
 ## development log
 

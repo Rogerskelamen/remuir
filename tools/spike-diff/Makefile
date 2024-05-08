@@ -23,8 +23,7 @@ INC_PATH += -I$(NEMU_HOME)/include
 lib_dependencies = libspike_main.a libriscv.a libdisasm.a libsoftfloat.a libfesvr.a libfdt.a
 INC_LIBS  = $(addprefix $(REPO_PATH)/build/, $(lib_dependencies))
 
-NAME = spike-diff-so
-BINARY = $(BUILD_DIR)/$(NAME)
+BINARY = $(BUILD_DIR)/spike-diff-so
 SRCS = difftest.cc
 
 $(BINARY): $(SPIKE) $(SRCS)

@@ -6,6 +6,7 @@ pub const CONFIG_ATRACE: bool = false; // trace for args
 pub const MBASE: usize = 0x80000000;
 pub const MSIZE: usize = 0x8000000;
 pub const GPR_NR: usize = 32;
+pub const IPRINT_NR_MAX: usize = 10;
 
 // io device address
 pub const SERIAL_PORT: Addr = 0xa00003f8;

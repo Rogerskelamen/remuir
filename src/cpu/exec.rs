@@ -37,8 +37,8 @@ fn statistic() {
 }
 
 #[rustfmt::skip]
-fn trace_and_difftest(s: &Decode) {
-  if CONFIG_ITRACE { println!("{}", s.log); }
+fn trace_and_difftest(s: &Decode, print_inst: bool) {
+  if CONFIG_ITRACE && print_inst { println!("{}", s.log); }
   if has_difftest() { difftest_step(s.pc); }
 }
 
@@ -106,7 +106,7 @@ fn execute(mut n: usize) {
     /* some work before exec */
     exec_once(&mut s);
     /* some work after exec */
-    trace_and_difftest(&s);
+    trace_and_difftest(&s, n <= IPRINT_NR_MAX);
     unsafe {
       INST_CNT += 1;
       if EMUSTATE.state != ExecState::Running {

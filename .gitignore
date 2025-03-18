@@ -1,6 +1,6 @@
 # common ignore
 *
-*/*
+*.*
 !*/
 
 # common files
